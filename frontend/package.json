@@ -21,7 +21,7 @@
     "@progress/kendo-react-layout": "^14.4.1",
     "@progress/kendo-react-listview": "^14.4.1",
     "@progress/kendo-react-popup": "^14.4.1",
-    "@progress/kendo-svg-icons": "^5.1.0",
+    "@progress/kendo-svg-icons": "^4.9.2",
     "@progress/kendo-theme-default": "^14.1.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

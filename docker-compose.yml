@@ -7,7 +7,7 @@ services:
     volumes:
       - db_data:/data
     environment:
-      - OPEN_AI_KEY=${OPEN_AI_KEY:-} #prolly will swap for sth free, maybe gemini?
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     
   
 #  frontend:

@@ -161,6 +161,114 @@ def talk_brief(talk_id: int, snapshot_id: int):
     return result
 
 
+@router.post("/talks/{talk_id}/brief")
+def generate_talk_brief(talk_id: int, snapshot_id: int):
+    from datetime import datetime
+    from agent import generate_brief
+
+    db = get_db()
+
+    talk = db.execute("SELECT title FROM talks WHERE id = ?", (talk_id,)).fetchone()
+    if not talk:
+        db.close()
+        raise HTTPException(status_code=404, detail="Talk not found")
+
+    snap = db.execute(
+        "SELECT id, label, cutoff_date, attendee_count, pct FROM snapshots WHERE id = ?",
+        (snapshot_id,),
+    ).fetchone()
+    if not snap:
+        db.close()
+        raise HTTPException(status_code=404, detail="Snapshot not found")
+
+    # Build demographics
+    cutoff = snap["cutoff_date"]
+    rows = db.execute(
+        """SELECT a.age, a.role, a.tech_interests, a.goal
+           FROM attendees a
+           JOIN registrations r ON r.attendee_id = a.id
+           WHERE r.talk_id = ? AND r.registered_at <= ?""",
+        (talk_id, cutoff),
+    ).fetchall()
+
+    age_groups = {"18-25": 0, "26-35": 0, "36-45": 0, "46+": 0}
+    tech_counter = {}
+    role_counter = {}
+    goal_counter = {}
+
+    for r in rows:
+        age = r["age"] or 0
+        if age <= 25:
+            age_groups["18-25"] += 1
+        elif age <= 35:
+            age_groups["26-35"] += 1
+        elif age <= 45:
+            age_groups["36-45"] += 1
+        else:
+            age_groups["46+"] += 1
+
+        try:
+            interests = json.loads(r["tech_interests"] or "[]")
+        except (json.JSONDecodeError, TypeError):
+            interests = []
+        for tech in interests:
+            tech_counter[tech] = tech_counter.get(tech, 0) + 1
+
+        role = r["role"] or "Unknown"
+        role_counter[role] = role_counter.get(role, 0) + 1
+
+        goal = r["goal"] or ""
+        if goal:
+            goal_counter[goal] = goal_counter.get(goal, 0) + 1
+
+    tech_sorted = sorted(tech_counter.items(), key=lambda x: x[1], reverse=True)
+    role_sorted = sorted(role_counter.items(), key=lambda x: x[1], reverse=True)
+    goal_sorted = sorted(goal_counter.items(), key=lambda x: x[1], reverse=True)
+
+    tech_stacks = [{"name": n, "count": c} for n, c in tech_sorted[:10]]
+    roles = [{"name": n, "count": c} for n, c in role_sorted]
+    goals = [{"name": n, "count": c} for n, c in goal_sorted[:8]]
+
+    # Find previous snapshot for shift context
+    prev_row = db.execute(
+        "SELECT label, attendee_count FROM snapshots WHERE talk_id = ? AND pct < ? ORDER BY pct DESC LIMIT 1",
+        (talk_id, snap["pct"]),
+    ).fetchone()
+
+    brief = generate_brief(
+        talk_title=talk["title"],
+        snapshot_label=snap["label"],
+        total=snap["attendee_count"],
+        age_groups=age_groups,
+        tech_stacks=tech_stacks,
+        roles=roles,
+        goals=goals,
+        prev_label=prev_row["label"] if prev_row else None,
+        prev_total=prev_row["attendee_count"] if prev_row else None,
+    )
+
+    now = datetime.utcnow().isoformat()
+    db.execute(
+        """INSERT OR REPLACE INTO briefs
+           (talk_id, snapshot_id, headline, audience_profile,
+            shift_alert, recommendations, tone, generated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (
+            talk_id, snap["id"],
+            brief["headline"],
+            brief["audience_profile"],
+            brief.get("shift_alert"),
+            json.dumps(brief.get("recommendations", [])),
+            brief.get("tone", "neutral"),
+            now,
+        ),
+    )
+    db.commit()
+    db.close()
+
+    return brief
+
+
 @router.get("/talks/{talk_id}/questions")
 def talk_questions(talk_id: int):
     db = get_db()
