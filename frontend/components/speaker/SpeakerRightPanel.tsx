@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@progress/kendo-react-buttons";
 import { ListView } from "@progress/kendo-react-listview";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 import { Brief, Question, User } from "../../types";
 
 interface Props {
@@ -53,8 +53,17 @@ export default function SpeakerRightPanel({ user }: Props) {
   }, [talkId]);
 
   const handleGenerate = async () => {
+    if (!talkId) return;
     setLoadingBrief(true);
-    await loadBrief(snapshotIdx);
+    try {
+      const snaps = await api.snapshots(talkId);
+      if (snaps[snapshotIdx]) {
+        const data = await api.generateBrief(talkId, snaps[snapshotIdx].id);
+        setBrief(data);
+      }
+    } catch {
+      setBrief(null);
+    }
     setLoadingBrief(false);
   };
 

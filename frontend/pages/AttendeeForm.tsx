@@ -6,7 +6,7 @@ import {
   DropDownList,
 } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
-import { api } from "../api";
+import { api } from "../utils/api";
 import { TalkSummary } from "../types";
 
 export default function AttendeeForm() {

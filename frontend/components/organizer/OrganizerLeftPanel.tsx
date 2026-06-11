@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 import { Attendee } from "../../types";
 
 export default function OrganizerLeftPanel() {

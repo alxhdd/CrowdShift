@@ -32,6 +32,11 @@ export const api = {
   brief: (talkId: number, snapshotId: number) =>
     request<any>(`/api/talks/${talkId}/brief?snapshot_id=${snapshotId}`),
 
+  generateBrief: (talkId: number, snapshotId: number) =>
+    request<any>(`/api/talks/${talkId}/brief?snapshot_id=${snapshotId}`, {
+      method: "POST",
+    }),
+
   questions: (talkId: number) =>
     request<any[]>(`/api/talks/${talkId}/questions`),
 

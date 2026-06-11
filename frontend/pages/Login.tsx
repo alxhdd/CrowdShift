@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
-import { api } from "../api";
+import { api } from "../utils/api";
 import { User } from "../types";
 
 const ROLES = [

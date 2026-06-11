@@ -34,9 +34,10 @@ ROLES_JUNIOR = [
 ]
 
 # Tech pools — attendees draw interests from these
-TECH_BACKEND   = ["Go", "Kubernetes", "PostgreSQL", "AWS", "Rust", "Java", "Terraform"]
-TECH_FRONTEND  = ["React", "TypeScript", "Next.js", "CSS", "Vue", "Tailwind"]
-TECH_AI        = ["LLMs", "Python", "LangChain", "RAG", "PyTorch", "AI Agents"]
+# (this is a JS / React conference, so frontend dominates)
+TECH_REACT  = ["React", "TypeScript", "Next.js", "JavaScript", "Tailwind", "Vue"]
+TECH_NODE   = ["Node.js", "GraphQL", "PostgreSQL", "AWS", "Go", "Rust"]
+TECH_AI     = ["LLMs", "Python", "LangChain", "RAG", "AI Agents", "PyTorch"]
 
 GOALS = [
     "Learn new skills", "Networking", "Job hunting", "Hiring",
@@ -52,14 +53,17 @@ COUNTRIES = [
 ]
 
 # 3 demographic waves — creates the "audience shift" over time
+# Early Bird = seniors/architects planning ahead
+# Regular   = mid-level devs, conference bread-and-butter
+# Student   = juniors / last-minute / promo tickets
 WAVES = [
     # (start_day, end_day, n, ticket_label, age_range, roles, tech_pools_with_weights)
-    (0,  25, 140, "Early Bird", (28, 45), ROLES_SENIOR,
-     [(TECH_BACKEND, 0.55), (TECH_FRONTEND, 0.25), (TECH_AI, 0.20)]),
-    (25, 55, 200, "Regular",    (24, 38), ROLES_MID,
-     [(TECH_BACKEND, 0.25), (TECH_FRONTEND, 0.50), (TECH_AI, 0.25)]),
-    (55, 75, 160, "Student",    (18, 26), ROLES_JUNIOR,
-     [(TECH_BACKEND, 0.10), (TECH_FRONTEND, 0.50), (TECH_AI, 0.40)]),
+    (0,  25, 120, "Early Bird", (30, 55), ROLES_SENIOR,
+     [(TECH_REACT, 0.40), (TECH_NODE, 0.40), (TECH_AI, 0.20)]),
+    (25, 55, 200, "Regular",    (22, 42), ROLES_MID,
+     [(TECH_REACT, 0.55), (TECH_NODE, 0.30), (TECH_AI, 0.15)]),
+    (55, 75, 180, "Student",    (18, 26), ROLES_JUNIOR,
+     [(TECH_REACT, 0.60), (TECH_NODE, 0.15), (TECH_AI, 0.25)]),
 ]
 
 # 8 talks — React Summit + JSNation
@@ -118,7 +122,7 @@ SESSIONS = [
         "capacity": 70,
         "hotness": 0.75,
         "description": "From prototype to 10k req/s.",
-        "tags": ["TypeScript", "AWS", "PostgreSQL"],
+        "tags": ["TypeScript", "Node.js", "PostgreSQL"],
     },
     {
         "id_tag": "s6",
@@ -151,7 +155,7 @@ SESSIONS = [
         "capacity": 60,
         "hotness": 0.50,
         "description": "Contract testing, e2e, and when to mock nothing.",
-        "tags": ["TypeScript", "Go", "Kubernetes"],
+        "tags": ["TypeScript", "Testing", "Go"],
     },
 ]
 
@@ -342,7 +346,8 @@ def run():
                 continue
             tag_overlap = len(session_tags[sid] & interests)
             fill_pct = session_fill[sid] / s["capacity"]
-            score = tag_overlap * 3 + s["hotness"] * 2 + (1.0 - fill_pct) * 1
+            # tag match dominates; room-remaining is a tiebreaker
+            score = tag_overlap * 5 + (1.0 - fill_pct) * 2
             scored.append((sid, score))
         scored.sort(key=lambda x: x[1], reverse=True)
 

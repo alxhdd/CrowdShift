@@ -5,7 +5,7 @@ import {
   ChartSeriesItem,
   ChartLegend,
 } from "@progress/kendo-react-charts";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 import { Segments } from "../../types";
 
 export default function OrganizerRightPanel() {

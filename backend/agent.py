@@ -5,7 +5,7 @@ import urllib.error
 
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai"
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.0-flash-lite"
 
 
 def generate_brief(talk_title: str, snapshot_label: str, total: int,

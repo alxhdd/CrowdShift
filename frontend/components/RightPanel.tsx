@@ -1,14 +1,13 @@
 import { User } from "../types";
-import ErrorBoundary from "./ErrorBoundary";
 
 interface Props {
   user: User;
 }
 
 export default function RightPanel({ user }: Props) {
-  if (user.role === "speaker") return <ErrorBoundary><SpeakerRightPanel user={user} /></ErrorBoundary>;
-  if (user.role === "organizer") return <ErrorBoundary><OrganizerRightPanel /></ErrorBoundary>;
-  if (user.role === "sponsor") return <ErrorBoundary><SponsorRightPanel /></ErrorBoundary>;
+  if (user.role === "speaker") return <SpeakerRightPanel user={user} />;
+  if (user.role === "organizer") return <OrganizerRightPanel />;
+  if (user.role === "sponsor") return <SponsorRightPanel />;
   return null;
 }
 

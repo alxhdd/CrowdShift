@@ -6,7 +6,7 @@ import {
   ChartSeriesItem,
   ChartLegend,
 } from "@progress/kendo-react-charts";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 import { Snapshot, Demographics, User } from "../../types";
 
 interface Props {
@@ -22,8 +22,15 @@ export default function SpeakerLeftPanel({ user, onSnapshotChange }: Props) {
 
   useEffect(() => {
     if (!talkId) return;
-    api.snapshots(talkId).then(setSnapshots);
-  }, [talkId]);
+    api.snapshots(talkId).then((data) => {
+      setSnapshots(data);
+      if (data.length > 0) {
+        setActiveIdx(data.length - 1);
+        onSnapshotChange(data.length - 1);
+        (window as any).__activeSnapshotIdx = data.length - 1;
+      }
+    });
+  }, [talkId, onSnapshotChange]);
 
   const loadDemo = useCallback(
     (idx: number) => {
@@ -40,7 +47,7 @@ export default function SpeakerLeftPanel({ user, onSnapshotChange }: Props) {
     loadDemo(activeIdx);
   }, [activeIdx, loadDemo]);
 
-  const handleChange = (e: { value: number }) => {
+  const handleChange = (e: any) => {
     setActiveIdx(e.value);
     onSnapshotChange(e.value);
     (window as any).__activeSnapshotIdx = e.value;
@@ -74,14 +81,16 @@ export default function SpeakerLeftPanel({ user, onSnapshotChange }: Props) {
           value={activeIdx}
           onChange={handleChange}
           step={1}
+          buttons={true}
           style={{ marginTop: 24, marginBottom: 16 }}
-        >
-          {snapshots.map((s) => (
-            <SliderLabel key={s.id} position={s.pct}>
+        />
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "#666", padding: "0 4px" }}>
+          {snapshots.map((s, i) => (
+            <span key={s.id} style={{ cursor: "pointer", color: i === activeIdx ? "#1967d2" : "#999", fontWeight: i === activeIdx ? 600 : 400 }} onClick={() => handleChange({ value: i })}>
               {s.label}
-            </SliderLabel>
+            </span>
           ))}
-        </Slider>
+        </div>
         <p style={{ textAlign: "center", color: "#666", fontSize: "0.85rem" }}>
           {snapshots[activeIdx]?.label} —{" "}
           {snapshots[activeIdx]?.attendee_count} attendees
