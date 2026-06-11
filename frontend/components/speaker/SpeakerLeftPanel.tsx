@@ -7,40 +7,40 @@ import {
   ChartLegend,
 } from "@progress/kendo-react-charts";
 import { api } from "../../utils/api";
+import { useDashboard } from "../../context/DashboardContext";
 import { Snapshot, Demographics, User } from "../../types";
 
 interface Props {
   user: User;
-  onSnapshotChange: (idx: number) => void;
 }
 
-export default function SpeakerLeftPanel({ user, onSnapshotChange }: Props) {
-  const talkId = (window as any).__selectedTalkId || user.talks?.[0]?.id;
+export default function SpeakerLeftPanel({ user }: Props) {
+  const { talkId, setSnapshotIdx } = useDashboard();
+  const effectiveTalkId = talkId || user.talks?.[0]?.id;
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const [demographics, setDemographics] = useState<Demographics | null>(null);
 
   useEffect(() => {
-    if (!talkId) return;
-    api.snapshots(talkId).then((data) => {
+    if (!effectiveTalkId) return;
+    api.snapshots(effectiveTalkId).then((data) => {
       setSnapshots(data);
       if (data.length > 0) {
         setActiveIdx(data.length - 1);
-        onSnapshotChange(data.length - 1);
-        (window as any).__activeSnapshotIdx = data.length - 1;
+        setSnapshotIdx(data.length - 1);
       }
     });
-  }, [talkId, onSnapshotChange]);
+  }, [effectiveTalkId, setSnapshotIdx]);
 
   const loadDemo = useCallback(
     (idx: number) => {
-      if (!snapshots[idx] || !talkId) return;
+      if (!snapshots[idx] || !effectiveTalkId) return;
       api
-        .demographics(talkId, snapshots[idx].id)
+        .demographics(effectiveTalkId, snapshots[idx].id)
         .then(setDemographics)
         .catch(() => setDemographics(null));
     },
-    [talkId, snapshots]
+    [effectiveTalkId, snapshots]
   );
 
   useEffect(() => {
@@ -49,8 +49,7 @@ export default function SpeakerLeftPanel({ user, onSnapshotChange }: Props) {
 
   const handleChange = (e: any) => {
     setActiveIdx(e.value);
-    onSnapshotChange(e.value);
-    (window as any).__activeSnapshotIdx = e.value;
+    setSnapshotIdx(e.value);
   };
 
   if (!snapshots.length) {

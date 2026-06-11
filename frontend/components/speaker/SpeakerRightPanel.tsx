@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@progress/kendo-react-buttons";
 import { ListView } from "@progress/kendo-react-listview";
 import { api } from "../../utils/api";
+import { useDashboard } from "../../context/DashboardContext";
 import { Brief, Question, User } from "../../types";
 
 interface Props {
@@ -9,38 +10,26 @@ interface Props {
 }
 
 export default function SpeakerRightPanel({ user }: Props) {
-  const talkId = (window as any).__selectedTalkId || user.talks?.[0]?.id;
-  const [snapshotIdx, setSnapshotIdx] = useState(0);
+  const { talkId: contextTalkId, snapshotIdx } = useDashboard();
+  const effectiveTalkId = contextTalkId || user.talks?.[0]?.id;
   const [brief, setBrief] = useState<Brief | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loadingBrief, setLoadingBrief] = useState(false);
 
-  // Poll for active snapshot index from left panel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const idx = (window as any).__activeSnapshotIdx;
-      if (idx !== undefined && idx !== snapshotIdx) {
-        setSnapshotIdx(idx);
-      }
-    }, 200);
-    return () => clearInterval(interval);
-  }, [snapshotIdx]);
-
-  // Fetch brief when snapshot changes
   const loadBrief = useCallback(
     async (idx: number) => {
-      if (!talkId) return;
+      if (!effectiveTalkId) return;
       try {
-        const snaps = await api.snapshots(talkId);
+        const snaps = await api.snapshots(effectiveTalkId);
         if (snaps[idx]) {
-          const data = await api.brief(talkId, snaps[idx].id);
+          const data = await api.brief(effectiveTalkId, snaps[idx].id);
           setBrief(data);
         }
       } catch {
         setBrief(null);
       }
     },
-    [talkId]
+    [effectiveTalkId]
   );
 
   useEffect(() => {
@@ -48,17 +37,17 @@ export default function SpeakerRightPanel({ user }: Props) {
   }, [snapshotIdx, loadBrief]);
 
   useEffect(() => {
-    if (!talkId) return;
-    api.questions(talkId).then(setQuestions);
-  }, [talkId]);
+    if (!effectiveTalkId) return;
+    api.questions(effectiveTalkId).then(setQuestions);
+  }, [effectiveTalkId]);
 
   const handleGenerate = async () => {
-    if (!talkId) return;
+    if (!effectiveTalkId) return;
     setLoadingBrief(true);
     try {
-      const snaps = await api.snapshots(talkId);
+      const snaps = await api.snapshots(effectiveTalkId);
       if (snaps[snapshotIdx]) {
-        const data = await api.generateBrief(talkId, snaps[snapshotIdx].id);
+        const data = await api.generateBrief(effectiveTalkId, snaps[snapshotIdx].id);
         setBrief(data);
       }
     } catch {

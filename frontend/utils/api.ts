@@ -53,4 +53,9 @@ export const api = {
   attendees: () => request<any[]>("/api/attendees"),
 
   segments: () => request<any>("/api/attendees/segments"),
+
+  lookupAttendee: (ticketId: string) =>
+    request<{ name: string; registered_talks: { id: number; title: string; track: string }[] }>(
+      `/api/attendee/lookup?ticket_id=${encodeURIComponent(ticketId)}`
+    ),
 };

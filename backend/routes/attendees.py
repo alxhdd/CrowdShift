@@ -48,6 +48,36 @@ def submit_question(body: QuestionRequest):
     return {"status": "ok", "message": "Question submitted"}
 
 
+@router.get("/attendee/lookup")
+def lookup_attendee(ticket_id: str):
+    db = get_db()
+
+    attendee = db.execute(
+        "SELECT id, name FROM attendees WHERE ticket_id = ?",
+        (ticket_id,),
+    ).fetchone()
+
+    if not attendee:
+        db.close()
+        raise HTTPException(status_code=400, detail="Invalid ticket ID")
+
+    talks = db.execute(
+        """SELECT t.id, t.title, t.track
+           FROM talks t
+           JOIN registrations r ON r.talk_id = t.id
+           WHERE r.attendee_id = ?
+           ORDER BY t.track, t.title""",
+        (attendee["id"],),
+    ).fetchall()
+
+    db.close()
+
+    return {
+        "name": attendee["name"],
+        "registered_talks": [dict(t) for t in talks],
+    }
+
+
 @router.get("/attendees")
 def list_attendees():
     db = get_db()

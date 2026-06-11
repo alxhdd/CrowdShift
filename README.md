@@ -17,7 +17,7 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 1. **Attendees register** for individual talks (seeded via realistic synthetic data).
 2. **Snapshots** are taken at regular registration milestones (e.g. 25%, 50%, 75% capacity) to capture how the audience evolves over time.
 3. **Speakers request a brief** for any snapshot — the backend computes live demographics and calls the Gemini AI agent.
-4. **The AI agent** (Gemini 2.0 Flash) returns a structured brief: a punchy headline, an audience profile, a shift alert comparing the latest vs. previous snapshot, three concrete recommendations, and a suggested tone (technical / balanced / introductory).
+4. **The AI agent** (gemini-3.1-flash-lite) returns a structured brief: a punchy headline, an audience profile, a shift alert comparing the latest vs. previous snapshot, three concrete recommendations, and a suggested tone (technical / balanced / introductory).
 5. **The dashboard** — built with Kendo UI for React — lets speakers and organizers browse talks, explore demographic breakdowns via charts, and view AI-generated briefs side by side with the data.
 
 ---
@@ -29,7 +29,7 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 | Frontend | React 19 + TypeScript, Vite, React Router |
 | UI Components | [Kendo UI for React](https://www.telerik.com/kendo-react-ui) (required by hackathon) |
 | Backend | FastAPI (Python), SQLite |
-| AI Agent | Gemini 2.0 Flash via OpenAI-compatible API |
+| AI Agent | Gemini 2.5 Flash via OpenAI-compatible API |
 | Infrastructure | Docker + Docker Compose |
 
 ---
