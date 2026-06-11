@@ -13,7 +13,7 @@ export default function OrganizerLeftPanel() {
   return (
     <div className="panel-card" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
       <h3>All Attendees ({attendees.length})</h3>
-      <div style="flex: 1; overflow: auto;">
+      <div style={{ flex: 1, overflow: "auto" }}>
         <Grid
           data={attendees.slice(0, 100)}
           style={{ height: "100%", fontSize: "0.8rem" }}
