@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - db_data:/data
+    environment:
+      - OPEN_AI_KEY=${OPEN_AI_KEY:-} #prolly will swap for sth free, maybe gemini?
+    
+  
+#  frontend:
+#    build:
+#      context: ./frontend
+#    ports:
+#      - "3000:3000"
+#    depends_on:
+#      - backend
+
+volumes:
+  db_data:

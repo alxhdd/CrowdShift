@@ -1,8 +1,8 @@
 {
-  "public_name": "Hackaton-Progress-x-GitNation",
-  "kicker": "hackathon sheningans",
+  "public_name": "CrowdShift- AI audience intelligent platform.",
+  "kicker": "Built for Hackaton-Progress-x-GitNation",
   "url": "#",
-  "description": "Speaker's tool built for the purpose of hackathon",
+  "description": "An AI audience-intelligence platform that gives speakers a living brief of who's in the room — from ticket #1 to showtime. Attendees can submit pre-talk questions. Speakers can reach back (organizer-gated). Organizers and sponsors get role-filtered views.",
   "skip": false,
   "portfolio": false,
   "card_type": "standard",
