@@ -1,0 +1,15 @@
+{
+  "public_name": "Hackaton-Progress-x-GitNation",
+  "kicker": "hackathon sheningans",
+  "url": "#",
+  "description": "Speaker's tool built for the purpose of hackathon",
+  "skip": false,
+  "portfolio": false,
+  "card_type": "standard",
+  "tech": [],
+  "detail_description": [],
+  "links": [
+    { "label": "live demo", "url": "#" },
+    { "label": "case study", "url": "#" }
+  ]
+}
