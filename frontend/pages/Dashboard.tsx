@@ -53,7 +53,7 @@ export default function Dashboard() {
       <div className="dashboard">
         <div style={{
           margin: "16px",
-          padding: "24px 28px",
+          padding: "24px 100px 24px 28px",
           background: "var(--stat-bg)",
           border: "1px solid var(--border)",
           borderRadius: 12,
