@@ -14,9 +14,9 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
   render() {
     if (this.state.error) {
       return (
-        <div style={{ padding: 20, background: "#fff", border: "2px solid #d93025", borderRadius: 8, margin: 16 }}>
+        <div className="panel-card" style={{ border: "2px solid #d93025" }}>
           <h3 style={{ color: "#d93025" }}>Error: {this.state.error.message}</h3>
-          <pre style={{ fontSize: "0.75rem", whiteSpace: "pre-wrap", maxHeight: 300, overflow: "auto" }}>
+          <pre style={{ fontSize: "0.75rem", whiteSpace: "pre-wrap", maxHeight: 300, overflow: "auto", color: "var(--text)" }}>
             {this.state.error.stack?.slice(0, 1000)}
           </pre>
         </div>
@@ -58,17 +58,17 @@ export default function Dashboard() {
                 ))}
               </select>
             )}
-            {selectedTalk && (
-              <span style={{ color: "#666", fontSize: "0.9rem" }}>
-                {selectedTalk.title} — {selectedTalk.track}
-              </span>
-            )}
-            {user.role === "organizer" && <span style={{ color: "#666" }}>React Summit + JSNation 2026</span>}
-            {user.role === "sponsor" && <span style={{ color: "#666" }}>Audience Intelligence</span>}
+          {selectedTalk && (
+            <span style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
+              {selectedTalk.title} — {selectedTalk.track}
+            </span>
+          )}
+          {user.role === "organizer" && <span style={{ color: "var(--muted)" }}>React Summit + JSNation 2026</span>}
+          {user.role === "sponsor" && <span style={{ color: "var(--muted)" }}>Audience Intelligence</span>}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span className="role-badge">{user.role}</span>
-            <a href="/" style={{ fontSize: "0.85rem", color: "#666" }}>Logout</a>
+            <a href="/" style={{ fontSize: "0.85rem", color: "var(--muted)" }}>Logout</a>
           </div>
         </div>
         <div className="dashboard-columns">

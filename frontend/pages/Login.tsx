@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Button } from "@progress/kendo-react-buttons";
 import { api } from "../utils/api";
 import { User } from "../types";
 
@@ -48,59 +47,52 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "80px auto", padding: "0 16px" }}>
-      <h1 style={{ textAlign: "center", marginBottom: 8 }}>CrowdShift</h1>
-      <p style={{ textAlign: "center", color: "#666", marginBottom: 32 }}>
-        AI-powered audience intelligence for conference speakers
-      </p>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg)",
+    }}>
+      <div style={{ maxWidth: 600, width: "100%", padding: "0 16px" }}>
+        <h1 style={{ textAlign: "center", marginBottom: 8, color: "var(--text)" }}>
+          CrowdShift
+        </h1>
+        <p style={{ textAlign: "center", color: "var(--muted)", marginBottom: 32 }}>
+          AI-powered audience intelligence for conference speakers
+        </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {ROLES.map((r) => {
-          const key = r.role + (r.user_id ?? "");
-          return (
-            <div
-              key={key}
-              onClick={() => loading || handleLogin(r.role, r.user_id)}
-              style={{
-                cursor: "pointer",
-                opacity: loading === key ? 0.6 : 1,
-                background: "#fff",
-                border: "1px solid #e0e0e0",
-                borderRadius: 8,
-                padding: 20,
-              }}
-            >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {ROLES.map((r) => {
+            const key = r.role + (r.user_id ?? "");
+            return (
               <div
+                key={key}
+                onClick={() => loading || handleLogin(r.role, r.user_id)}
+                className="panel-card login-card"
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  opacity: loading === key ? 0.6 : 1,
                 }}
               >
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>{r.name}</div>
-                  <p style={{ color: "#888", margin: 0 }}>{r.subtitle}</p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>{r.name}</div>
+                    <p style={{ margin: 0, opacity: 0.65 }}>{r.subtitle}</p>
+                  </div>
+                  <span className="tag">{r.label}</span>
                 </div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                    background: "#e8f0fe",
-                    color: "#1967d2",
-                  }}
-                >
-                  {r.label}
-                </span>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
       <p style={{ textAlign: "center", marginTop: 24 }}>
         <Link to="/attendee">I'm an Attendee — submit a question</Link>
       </p>
+      <p style={{ textAlign: "center", marginTop: 8 }}>
+        <Link to="/" style={{ color: "var(--muted)", fontSize: "0.85rem" }}>← Back to home</Link>
+      </p>
+      </div>
     </div>
   );
 }

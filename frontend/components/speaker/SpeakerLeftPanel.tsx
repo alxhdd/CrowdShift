@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Slider, SliderLabel } from "@progress/kendo-react-inputs";
+import { Slider } from "@progress/kendo-react-inputs";
 import {
   Chart,
   ChartSeries,
@@ -9,6 +9,9 @@ import {
 import { api } from "../../utils/api";
 import { useDashboard } from "../../context/DashboardContext";
 import { Snapshot, Demographics, User } from "../../types";
+
+const ACCENT = "#f5eb7c";
+const ACCENT_DIM = "#c7b93d";
 
 interface Props {
   user: User;
@@ -83,14 +86,22 @@ export default function SpeakerLeftPanel({ user }: Props) {
           buttons={true}
           style={{ marginTop: 24, marginBottom: 16 }}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "#666", padding: "0 4px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", padding: "0 4px" }}>
           {snapshots.map((s, i) => (
-            <span key={s.id} style={{ cursor: "pointer", color: i === activeIdx ? "#1967d2" : "#999", fontWeight: i === activeIdx ? 600 : 400 }} onClick={() => handleChange({ value: i })}>
+            <span
+              key={s.id}
+              style={{
+                cursor: "pointer",
+                color: i === activeIdx ? ACCENT : "var(--muted)",
+                fontWeight: i === activeIdx ? 600 : 400,
+              }}
+              onClick={() => handleChange({ value: i })}
+            >
               {s.label}
             </span>
           ))}
         </div>
-        <p style={{ textAlign: "center", color: "#666", fontSize: "0.85rem" }}>
+        <p style={{ textAlign: "center", color: "var(--text)", fontSize: "0.85rem", opacity: 0.75 }}>
           {snapshots[activeIdx]?.label} —{" "}
           {snapshots[activeIdx]?.attendee_count} attendees
         </p>
@@ -122,7 +133,7 @@ export default function SpeakerLeftPanel({ user }: Props) {
                   data={techData}
                   field="value"
                   categoryField="category"
-                  color="#1967d2"
+                  color={ACCENT}
                 />
               </ChartSeries>
             </Chart>

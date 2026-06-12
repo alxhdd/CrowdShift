@@ -29,7 +29,7 @@ export default function OrganizerLeftPanel() {
           <GridColumn field="goal" title="Goal" width="140px" />
         </Grid>
       </div>
-      <p style={{ fontSize: "0.75rem", color: "#999", marginTop: 8 }}>
+      <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: 8 }}>
         Showing first 100 of {attendees.length} attendees
       </p>
     </div>

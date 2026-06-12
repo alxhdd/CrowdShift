@@ -58,7 +58,7 @@ export default function SpeakerRightPanel({ user }: Props) {
 
   return (
     <>
-      <div className="panel-card">
+      <div className="panel-card-accent">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0 }}>AI Audience Brief</h3>
           <Button onClick={handleGenerate} disabled={loadingBrief}>
@@ -68,9 +68,9 @@ export default function SpeakerRightPanel({ user }: Props) {
 
         {brief && brief.headline !== "No brief generated yet" ? (
           <div style={{ marginTop: 16 }}>
-            <div className="brief-headline">{brief.headline}</div>
+            <div className="brief-headline" style={{ color: "inherit" }}>{brief.headline}</div>
             {brief.audience_profile && (
-              <div className="brief-body">{brief.audience_profile}</div>
+              <div className="brief-body" style={{ color: "inherit", opacity: 0.8 }}>{brief.audience_profile}</div>
             )}
             {brief.shift_alert && (
               <div className="brief-shift">{brief.shift_alert}</div>
@@ -80,14 +80,14 @@ export default function SpeakerRightPanel({ user }: Props) {
                 <strong style={{ fontSize: "0.9rem" }}>Recommendations:</strong>
                 <ul className="brief-recs" style={{ marginTop: 8 }}>
                   {brief.recommendations.map((rec, i) => (
-                    <li key={i}>{rec}</li>
+                    <li key={i} style={{ color: "inherit", opacity: 0.8 }}>{rec}</li>
                   ))}
                 </ul>
               </>
             )}
           </div>
         ) : (
-          <div className="empty-state" style={{ marginTop: 16 }}>
+          <div className="empty-state" style={{ marginTop: 16, color: "inherit" }}>
             {brief?.headline === "No brief generated yet"
               ? "No brief available. Click Generate to create one."
               : "Click a milestone in the timeline to load the brief."}
@@ -114,11 +114,11 @@ export default function SpeakerRightPanel({ user }: Props) {
 function QuestionItem(props: { dataItem: Question }) {
   const q = props.dataItem;
   return (
-    <div style={{ padding: "8px 0", borderBottom: "1px solid #eee" }}>
-      <p style={{ margin: 0, fontSize: "0.9rem" }}>{q.question_text}</p>
+    <div style={{ padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
+      <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--text)" }}>{q.question_text}</p>
       <div style={{ marginTop: 4, display: "flex", gap: 12 }}>
         <span className="tag">{q.attendee_name}</span>
-        <span style={{ fontSize: "0.75rem", color: "#999" }}>
+        <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>
           {new Date(q.submitted_at).toLocaleDateString()}
         </span>
       </div>

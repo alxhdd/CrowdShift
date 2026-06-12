@@ -44,9 +44,9 @@ export default function SponsorLeftPanel() {
             ["Top Tech", segments.tech_stacks[0]?.name ?? "—"],
             ["Top Role", segments.roles[0]?.name ?? "—"],
           ].map(([label, value]) => (
-            <div key={label as string} style={{ background: "#f8f9fa", padding: 12, borderRadius: 6 }}>
-              <div style={{ fontSize: "0.75rem", color: "#999" }}>{label}</div>
-              <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{value}</div>
+            <div key={label as string} className="stat-box">
+              <div className="stat-label">{label}</div>
+              <div className="stat-value">{value}</div>
             </div>
           ))}
         </div>
@@ -76,7 +76,7 @@ export default function SponsorLeftPanel() {
               data={techData}
               field="value"
               categoryField="category"
-              color="#ea4335"
+              color="var(--accent2)"
             />
           </ChartSeries>
         </Chart>

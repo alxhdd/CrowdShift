@@ -1,0 +1,205 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root,
+[data-theme] {
+  --kendo-color-primary: var(--accent);
+  --kendo-color-primary-hover: var(--accent-from);
+  --kendo-color-primary-active: var(--accent-to);
+  --kendo-color-on-primary: var(--cta-text);
+  --kendo-color-secondary: var(--accent2);
+  --kendo-color-secondary-hover: var(--accent2);
+  --kendo-color-secondary-active: var(--accent2);
+  --kendo-color-on-secondary: var(--cta-text);
+  --kendo-color-app-surface: var(--bg);
+  --kendo-body-bg: var(--bg);
+  --kendo-body-text: var(--text);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--bg) !important;
+  color: var(--text);
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  transition: background 0.2s, color 0.2s;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+}
+
+.k-button,
+.k-button.k-button-md,
+.k-button.k-button-sm,
+.k-button.k-button-lg {
+  font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding-block: 15px;
+  padding-inline: 30px;
+}
+
+.k-button.k-button-lg {
+  padding-block: 14px;
+  padding-inline: 32px;
+  font-size: 16px;
+}
+
+.k-button.k-button-flat,
+.k-button.k-button-clear {
+  padding-block: 15px;
+  padding-inline: 20px;
+}
+
+.k-button.k-icon-button {
+  padding: 10px !important;
+}
+
+.role-badge,
+.tag {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+select {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.hero {
+  position: relative;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -15%, var(--glow-1), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 88% 10%, var(--glow-2), transparent 65%);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 28%, black 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 28%, black 20%, transparent 70%);
+  pointer-events: none;
+}
+
+@keyframes glowDrift {
+  0%, 100% { background-position: 50% 0%, 88% 10%; }
+  50%      { background-position: 45% 5%, 80% 25%; }
+}
+
+.hero {
+  animation: glowDrift 14s ease-in-out infinite;
+}
+
+.hero-accent {
+  background: linear-gradient(100deg, var(--hero-accent-from) 20%, var(--hero-accent-to) 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cta-btn {
+  transition: box-shadow 0.25s ease;
+}
+.cta-btn:hover {
+  box-shadow: 0 0 20px var(--cta-glow);
+}
+
+[data-theme="dark"] .cta-btn-secondary:hover {
+  box-shadow: 0 0 20px rgba(235, 151, 131, 0.35);
+}
+[data-theme="light"] .cta-btn-secondary:hover {
+  box-shadow: 0 0 20px rgba(245, 235, 124, 0.35);
+}
+
+.step-card {
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+[data-theme="dark"] .step-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+[data-theme="dark"] .step-card:hover {
+  border-color: rgba(245, 235, 124, 0.35);
+  box-shadow: 0 0 20px rgba(245, 235, 124, 0.12);
+}
+
+[data-theme="light"] .step-card {
+  background: rgba(26, 26, 29, 0.03);
+  border: 1px solid rgba(26, 26, 29, 0.07);
+}
+[data-theme="light"] .step-card:hover {
+  border-color: rgba(235, 151, 131, 0.35);
+  box-shadow: 0 0 20px rgba(235, 151, 131, 0.15);
+}
+
+.step-card:hover {
+  transform: translateY(-3px);
+}
+
+.login-card {
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+[data-theme="dark"] .login-card:hover {
+  border-color: rgba(245, 235, 124, 0.4);
+  box-shadow: 0 0 16px rgba(245, 235, 124, 0.12);
+  background: rgba(245, 235, 124, 0.06);
+}
+[data-theme="light"] .login-card:hover {
+  border-color: rgba(235, 151, 131, 0.4);
+  box-shadow: 0 0 16px rgba(235, 151, 131, 0.15);
+  background: rgba(235, 151, 131, 0.08);
+}
+
+section {
+  background: transparent;
+}
+
+@media (max-width: 600px) {
+  .nav-hide-mobile {
+    display: none !important;
+  }
+}
+
+.k-appbar,
+.k-appbar.k-appbar-base {
+  background-color: transparent !important;
+}
+
+.nav-glass {
+  background: transparent !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  position: relative !important;
+  width: 100% !important;
+  z-index: 100 !important;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06) !important;
+}

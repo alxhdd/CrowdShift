@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   TextBox,
   TextArea,
@@ -15,8 +15,6 @@ interface RegisteredTalk {
 }
 
 export default function AttendeeForm() {
-  const navigate = useNavigate();
-
   const [step, setStep] = useState<"lookup" | "form">("lookup");
   const [name, setName] = useState("");
   const [ticketId, setTicketId] = useState("");
@@ -75,25 +73,19 @@ export default function AttendeeForm() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f5f5f5",
+        background: "var(--bg)",
       }}>
-        <div style={{
-          background: "#fff",
-          borderRadius: 12,
-          padding: "40px 36px",
-          width: 400,
-          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-        }}>
-          <h1 style={{ textAlign: "center", margin: "0 0 4px", fontSize: "1.5rem" }}>
+        <div className="panel-card" style={{ width: 400 }}>
+          <h1 style={{ textAlign: "center", margin: "0 0 4px", fontSize: "1.5rem", color: "var(--text)" }}>
             Ask a Question
           </h1>
-          <p style={{ textAlign: "center", color: "#666", marginBottom: 28, fontSize: "0.9rem" }}>
+          <p style={{ textAlign: "center", color: "var(--muted)", marginBottom: 28, fontSize: "0.9rem" }}>
             Identify yourself to get started
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600 }}>
+              <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--text)" }}>
                 Name
               </label>
               <TextBox
@@ -105,7 +97,7 @@ export default function AttendeeForm() {
             </div>
 
             <div>
-              <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600 }}>
+              <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--text)" }}>
                 Ticket ID
               </label>
               <TextBox
@@ -130,9 +122,7 @@ export default function AttendeeForm() {
             </Button>
 
             <p style={{ textAlign: "center", margin: 0 }}>
-              <a href="/" style={{ color: "#666", fontSize: "0.85rem" }}>
-                Back to login
-              </a>
+              <Link to="/">Back to login</Link>
             </p>
           </div>
         </div>
@@ -141,24 +131,19 @@ export default function AttendeeForm() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f5f5" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 520, margin: "0 auto", padding: "48px 16px" }}>
-        <div style={{
-          background: "#fff",
-          borderRadius: 12,
-          padding: "40px 36px",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-        }}>
-          <h1 style={{ textAlign: "center", margin: "0 0 4px", fontSize: "1.5rem" }}>
+        <div className="panel-card">
+          <h1 style={{ textAlign: "center", margin: "0 0 4px", fontSize: "1.5rem", color: "var(--text)" }}>
             Ask a Question
           </h1>
-          <p style={{ textAlign: "center", color: "#666", marginBottom: 28, fontSize: "0.9rem" }}>
+          <p style={{ textAlign: "center", color: "var(--muted)", marginBottom: 28, fontSize: "0.9rem" }}>
             Hi {name}! What would you like to ask?
           </p>
 
           {talks.length === 0 ? (
             <>
-              <p style={{ textAlign: "center", color: "#999" }}>
+              <p style={{ textAlign: "center", color: "var(--muted)" }}>
                 You are not registered for any talks yet.
               </p>
               <p style={{ textAlign: "center", marginTop: 24 }}>
@@ -168,7 +153,7 @@ export default function AttendeeForm() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600 }}>
+                <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--text)" }}>
                   Select Talk
                 </label>
                 <DropDownList
@@ -183,7 +168,7 @@ export default function AttendeeForm() {
               </div>
 
               <div>
-                <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600 }}>
+                <label style={{ display: "block", marginBottom: 4, fontSize: "0.85rem", fontWeight: 600, color: "var(--text)" }}>
                   Your Question
                 </label>
                 <TextArea
@@ -203,7 +188,7 @@ export default function AttendeeForm() {
                 <div style={{
                   color: "#188038",
                   fontSize: "0.85rem",
-                  background: "#e6f4ea",
+                  background: "rgba(24,128,56,0.1)",
                   padding: 12,
                   borderRadius: 6,
                 }}>
@@ -226,7 +211,7 @@ export default function AttendeeForm() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "#666",
+                    color: "var(--muted)",
                     fontSize: "0.85rem",
                     cursor: "pointer",
                     textDecoration: "underline",
