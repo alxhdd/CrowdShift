@@ -33,8 +33,8 @@ export default function SpeakerLeftPanel({ user }: Props) {
     api.snapshots(effectiveTalkId).then((data) => {
       setSnapshots(data);
       if (data.length > 0) {
-        setActiveIdx(data.length - 1);
-        setSnapshotIdx(data.length - 1);
+        setActiveIdx(0);
+        setSnapshotIdx(0);
       }
     });
   }, [effectiveTalkId, setSnapshotIdx]);
