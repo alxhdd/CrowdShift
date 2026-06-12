@@ -2,6 +2,8 @@
 
 > Built for the [Progress x GitNation Hackathon](https://www.hackathonparty.com/hackathons/43) — "Build the tools that make tech events more meaningful."
 
+**Live demo:** [crowdshift.online](https://crowdshift.online)
+
 CrowdShift gives conference speakers a real-time audience intelligence brief before they walk on stage. As attendees register for a talk, the system aggregates their demographics — age groups, tech stacks, roles, and goals — and uses an AI agent to generate an actionable speaker brief: who's in the room, what they care about, and how to tailor the talk for maximum impact.
 
 ---
@@ -15,10 +17,10 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 ## How It Works
 
 1. **Attendees register** for individual talks (seeded via realistic synthetic data).
-2. **Snapshots** are taken at regular registration milestones (e.g. 25%, 50%, 75% capacity) to capture how the audience evolves over time.
+2. **Snapshots** are taken at registration milestones (25%, 50%, 75%, 100% capacity) to capture how the audience evolves over time.
 3. **Speakers request a brief** for any snapshot — the backend computes live demographics and calls the Gemini AI agent.
-4. **The AI agent** (gemini-3.1-flash-lite) returns a structured brief: a punchy headline, an audience profile, a shift alert comparing the latest vs. previous snapshot, three concrete recommendations, and a suggested tone (technical / balanced / introductory).
-5. **The dashboard** — built with Kendo UI for React — lets speakers and organizers browse talks, explore demographic breakdowns via charts, and view AI-generated briefs side by side with the data.
+4. **The AI agent** (gemini-3.1-flash-lite) returns a structured brief: a punchy headline, an audience profile, a shift alert comparing the latest vs. previous snapshot, concrete recommendations, and a suggested tone (technical / balanced / introductory).
+5. **The dashboard** — built with Kendo UI for React — lets speakers, organizers, and sponsors browse talks, explore demographic breakdowns via charts, and view AI-generated briefs side by side with the data.
 
 ---
 
@@ -26,22 +28,24 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18 + TypeScript, Vite, React Router |
-| UI Components | [Kendo UI for React](https://www.telerik.com/kendo-react-ui) (required by hackathon) |
-| Backend | FastAPI (Python), SQLite |
+| Frontend | React 18 + TypeScript, Vite 8, React Router (HashRouter) |
+| UI Components | [Kendo UI for React](https://www.telerik.com/kendo-react-ui) — Charts, Grid, Slider, Inputs, Layout |
+| Backend | FastAPI (Python 3.13), SQLite |
 | AI Agent | gemini-3.1-flash-lite via OpenAI-compatible API |
-| Infrastructure | Docker + Docker Compose |
+| Infrastructure | Docker + Docker Compose, Caddy (reverse proxy) |
 
 ---
 
 ## Features
 
-- **Role-based login** — Speaker, Organizer, and Sponsor views
+- **Role-based dashboards** — Speaker, Organizer, and Sponsor views with tailored data
 - **Talk demographics** — age groups, top tech stacks, roles, and attendee goals per snapshot
-- **Snapshot comparison** — track how the audience composition shifts as registration fills up
-- **AI audience brief** — structured JSON brief with headline, profile, shift alert, and actionable speaker tips
+- **Snapshot timeline** — slider to scrub through milestones and watch the audience shift
+- **AI audience brief** — structured brief with headline, profile, shift alert, and actionable tips
 - **Fallback mode** — rule-based brief generated locally when the Gemini API key is unavailable
-- **Q&A feed** — attendee-submitted questions per talk
+- **Q&A feed** — attendees submit questions via ticket ID; speakers see them in real time
+- **Privacy by design** — speakers see aggregates only, sponsors get anonymized cohorts, only organizers see full PII
+- **Dark/light theme** — full theme system with Kendo theme switching
 
 ---
 
@@ -50,17 +54,20 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 ### Prerequisites
 
 - Docker and Docker Compose
+- Node.js 20+ (for frontend)
 - (Optional) A Gemini API key for AI-generated briefs
 
 ### Run with Docker
 
 ```bash
-# Clone the repo
-git clone <repo-url>
-cd Hackaton-Progress-x-GitNation
+git clone https://github.com/alxhdd/CrowdShift.git
+cd CrowdShift
+
+# Create .env with your Gemini key (optional)
+echo "GEMINI_API_KEY=your_key_here" > .env
 
 # Start the backend (seeds the database automatically on first run)
-GEMINI_API_KEY=your_key_here docker compose up --build
+docker compose up --build
 ```
 
 The API will be available at `http://localhost:8000`.
@@ -95,6 +102,11 @@ The frontend will be available at `http://localhost:5173`.
 | `GET` | `/api/talks/{id}/brief?snapshot_id=` | Retrieve the stored AI brief |
 | `POST` | `/api/talks/{id}/brief?snapshot_id=` | Generate (or regenerate) an AI brief |
 | `GET` | `/api/talks/{id}/questions` | List attendee questions for a talk |
+| `POST` | `/api/attendee/question` | Submit an attendee question |
+| `GET` | `/api/attendee/lookup?ticket_id=` | Look up attendee by ticket ID |
+| `GET` | `/api/attendees` | List all attendees (organizer only) |
+| `GET` | `/api/attendees/segments` | Aggregate audience segments |
+| `GET` | `/api/attendees/cohorts` | Privacy-safe cohort breakdown |
 | `GET` | `/api/health` | Health check |
 
 ---
@@ -104,33 +116,47 @@ The frontend will be available at `http://localhost:5173`.
 ```
 .
 ├── backend/
-│   ├── main.py              # FastAPI app entry point
-│   ├── models.py            # SQLite schema and connection helpers
+│   ├── main.py              # FastAPI app + CORS
+│   ├── models.py            # SQLite schema and connection
 │   ├── agent.py             # Gemini AI agent + rule-based fallback
-│   ├── generate_briefs.py   # Batch brief generation script
-│   ├── seed.py              # Synthetic data seeder (Faker)
+│   ├── seed.py              # Synthetic data seeder (500 attendees)
+│   ├── entrypoint.sh        # Docker entrypoint (seed + serve)
 │   ├── routes/
-│   │   ├── auth.py          # Login endpoints
-│   │   ├── talks.py         # Talks, snapshots, demographics, briefs
-│   │   └── attendees.py     # Attendee endpoints
+│   │   ├── auth.py          # Login endpoint
+│   │   ├── talks.py         # Talks, snapshots, demographics, briefs, questions
+│   │   └── attendees.py     # Attendee lookup, segments, cohorts
 │   └── Dockerfile
 ├── frontend/
-│   ├── App.tsx              # Router (Login → Dashboard)
+│   ├── App.tsx              # HashRouter (Landing, Login, Dashboard, Attendee)
+│   ├── main.tsx             # React entry point
+│   ├── types.ts             # Shared TypeScript interfaces
 │   ├── pages/
+│   │   ├── Landing.tsx      # Marketing landing page
 │   │   ├── Login.tsx        # Role selection screen
-│   │   ├── Dashboard.tsx    # Main speaker/organizer view
-│   │   └── AttendeeForm.tsx # Attendee registration form
-│   ├── api.ts               # API client
-│   └── types.ts             # Shared TypeScript types
+│   │   ├── Dashboard.tsx    # Main dashboard with role-based panels
+│   │   └── AttendeeForm.tsx # Ticket lookup + question submission
+│   ├── components/
+│   │   ├── Navbar.tsx       # AppBar with logo, nav, theme toggle
+│   │   ├── DashboardKpiBar.tsx
+│   │   ├── LeftPanel.tsx    # Role router for left panels
+│   │   ├── RightPanel.tsx   # Role router for right panels
+│   │   ├── speaker/        # Speaker charts + AI brief + Q&A grid
+│   │   ├── organizer/      # Organizer charts + full attendee grid
+│   │   └── sponsor/        # Sponsor charts + cohort grid
+│   ├── context/
+│   │   ├── ThemeContext.tsx  # Dark/light theme provider
+│   │   └── DashboardContext.tsx  # Shared talk/snapshot state
+│   └── utils/
+│       └── api.ts           # API client
 ├── docker-compose.yml
-└── scripts/                 # Planning and content artifacts
+└── README.md
 ```
 
 ---
 
 ## Hackathon Context
 
-Built at the **Progress x GitNation Hackathon** (June 11–12, 2024, Amsterdam + online).
+Built at the **Progress x GitNation Hackathon** (June 11–12, 2026, Amsterdam + online).
 
 - **Theme:** Build tools that make tech events more meaningful
 - **Required tech:** Kendo UI Components
