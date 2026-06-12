@@ -1,7 +1,7 @@
 import json
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from models import get_db
+from models import db_session
 from routes.deps import require_role
 
 router = APIRouter(prefix="/api", tags=["attendees"])
@@ -14,16 +14,13 @@ class QuestionRequest(BaseModel):
 
 
 @router.post("/attendee/question")
-def submit_question(body: QuestionRequest):
-    db = get_db()
-
+def submit_question(body: QuestionRequest, db=Depends(db_session)):
     attendee = db.execute(
         "SELECT id FROM attendees WHERE ticket_id = ?",
         (body.ticket_id,),
     ).fetchone()
 
     if not attendee:
-        db.close()
         raise HTTPException(status_code=400, detail="Invalid ticket ID")
 
     reg = db.execute(
@@ -32,7 +29,6 @@ def submit_question(body: QuestionRequest):
     ).fetchone()
 
     if not reg:
-        db.close()
         raise HTTPException(status_code=400, detail="Not registered for this talk")
 
     from datetime import datetime, timezone
@@ -44,22 +40,18 @@ def submit_question(body: QuestionRequest):
         (attendee["id"], body.talk_id, body.question_text, now),
     )
     db.commit()
-    db.close()
 
     return {"status": "ok", "message": "Question submitted"}
 
 
 @router.get("/attendee/lookup")
-def lookup_attendee(ticket_id: str):
-    db = get_db()
-
+def lookup_attendee(ticket_id: str, db=Depends(db_session)):
     attendee = db.execute(
         "SELECT id, name FROM attendees WHERE ticket_id = ?",
         (ticket_id,),
     ).fetchone()
 
     if not attendee:
-        db.close()
         raise HTTPException(status_code=400, detail="Invalid ticket ID")
 
     talks = db.execute(
@@ -71,8 +63,6 @@ def lookup_attendee(ticket_id: str):
         (attendee["id"],),
     ).fetchall()
 
-    db.close()
-
     return {
         "name": attendee["name"],
         "registered_talks": [dict(t) for t in talks],
@@ -80,8 +70,7 @@ def lookup_attendee(ticket_id: str):
 
 
 @router.get("/attendees")
-def list_attendees(role=Depends(require_role("organizer"))):
-    db = get_db()
+def list_attendees(role=Depends(require_role("organizer")), db=Depends(db_session)):
     rows = db.execute(
         """SELECT id, ticket_id, name, email, age, role, company, country,
                   ticket_type, registered_at, experience_years, goal,
@@ -90,18 +79,14 @@ def list_attendees(role=Depends(require_role("organizer"))):
            FROM attendees
            ORDER BY registered_at ASC"""
     ).fetchall()
-    db.close()
     return [dict(r) for r in rows]
 
 
 @router.get("/attendees/segments")
-def attendee_segments(role=Depends(require_role("speaker", "organizer", "sponsor"))):
-    db = get_db()
-
+def attendee_segments(role=Depends(require_role("speaker", "organizer", "sponsor")), db=Depends(db_session)):
     rows = db.execute(
         "SELECT tech_interests, role, company, country, age, experience_years FROM attendees"
     ).fetchall()
-    db.close()
 
     tech_counter = {}
     role_counter = {}
@@ -151,9 +136,7 @@ def attendee_segments(role=Depends(require_role("speaker", "organizer", "sponsor
 
 
 @router.get("/attendees/cohorts")
-def attendee_cohorts(role=Depends(require_role("organizer", "sponsor"))):
-    db = get_db()
-
+def attendee_cohorts(role=Depends(require_role("organizer", "sponsor")), db=Depends(db_session)):
     rows = db.execute(
         "SELECT role, experience_years, tech_interests, goal, company_size, evaluating FROM attendees"
     ).fetchall()
@@ -190,8 +173,6 @@ def attendee_cohorts(role=Depends(require_role("organizer", "sponsor"))):
         cohorts[key]["company_sizes"][cs] = cohorts[key]["company_sizes"].get(cs, 0) + 1
         for tech in interests:
             cohorts[key]["interests"][tech] = cohorts[key]["interests"].get(tech, 0) + 1
-
-    db.close()
 
     result = []
     for name, data in sorted(cohorts.items(), key=lambda x: x[1]["count"], reverse=True):

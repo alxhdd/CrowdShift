@@ -94,6 +94,15 @@ def get_db() -> sqlite3.Connection:
     return conn
 
 
+def db_session():
+    """FastAPI dependency — guarantees close on any exit path."""
+    db = get_db()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 def init_db() -> None:
     """Create all tables if they don't exist."""
     conn = get_db()

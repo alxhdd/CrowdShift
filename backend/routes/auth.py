@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from models import get_db
+from models import db_session
 from routes.deps import create_token
 
 router = APIRouter(prefix="/api", tags=["auth"])
@@ -12,12 +12,10 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/login")
-def login(body: LoginRequest):
+def login(body: LoginRequest, db=Depends(db_session)):
     role = body.role.lower()
     if role not in ("speaker", "organizer", "sponsor"):
         raise HTTPException(status_code=400, detail="Invalid role")
-
-    db = get_db()
 
     if role == "speaker":
         if not body.user_id:
@@ -34,7 +32,6 @@ def login(body: LoginRequest):
             (user["id"],),
         ).fetchall()
 
-        db.close()
         return {
             "user_id": user["id"],
             "name": user["name"],
@@ -51,7 +48,6 @@ def login(body: LoginRequest):
             raise HTTPException(status_code=404, detail="No organizer found")
 
         talks = db.execute("SELECT id, title, track FROM talks").fetchall()
-        db.close()
         return {
             "user_id": user["id"],
             "name": user["name"],
@@ -68,7 +64,6 @@ def login(body: LoginRequest):
             raise HTTPException(status_code=404, detail="No sponsor found")
 
         talks = db.execute("SELECT id, title, track FROM talks").fetchall()
-        db.close()
         return {
             "user_id": user["id"],
             "name": user["name"],
@@ -77,5 +72,4 @@ def login(body: LoginRequest):
             "token": create_token("sponsor"),
         }
 
-    db.close()
     raise HTTPException(status_code=400, detail="Invalid role")
