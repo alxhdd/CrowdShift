@@ -81,7 +81,7 @@ export default function SponsorLeftPanel() {
                 field="count"
                 categoryField="range"
                 colorField="color"
-                holeSize={60}
+                holeSize={40}
               />
             </ChartSeries>
             <ChartLegend position="bottom" labels={{ font: "11px inherit" }} />

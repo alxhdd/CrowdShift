@@ -8,7 +8,7 @@ function Logo() {
   const logoSrc = mode === "dark" ? "/logo-dark.png" : "/logo-light.png";
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: '"Space Grotesk", sans-serif', fontSize: "1.2rem", fontWeight: 700, color: "var(--text)" }}>
-      <img src={logoSrc} alt="CrowdShift" height={80} style={{ display: "block", mixBlendMode: "screen" }} />
+      <img src={logoSrc} alt="CrowdShift" height={60} style={{ display: "block", mixBlendMode: "screen" }} />
       Crowd<span style={{ color: "var(--accent)" }}>Shift</span>
     </span>
   );
