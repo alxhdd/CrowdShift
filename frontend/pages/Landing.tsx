@@ -46,7 +46,7 @@ export default function Landing() {
               fillMode="outline"
               size="large"
               rounded="full"
-              onClick={() => document.getElementById("privacy")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => window.open("https://youtu.be/LepsNZo-VHA", "_blank")}
             >
               How it works
             </Button>

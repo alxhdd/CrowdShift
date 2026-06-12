@@ -51,7 +51,7 @@ export default function Navbar() {
         {isLanding && (
           <>
             <span className="nav-hide-mobile">
-              <Button fillMode="flat" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button fillMode="flat" onClick={() => window.open("https://youtu.be/LepsNZo-VHA", "_blank")}>
                 How it works
               </Button>
             </span>
