@@ -79,6 +79,7 @@ export default function Landing() {
             {
               title: "Speakers",
               body: "See aggregate demographics for their talk — age ranges, tech stacks, roles. Never individual attendee PII.",
+              highlighted: true,
             },
             {
               title: "Organizers",
@@ -95,7 +96,7 @@ export default function Landing() {
               className="step-card"
               style={{
                 position: "relative",
-                border: item.featured ? "2px solid var(--accent)" : undefined,
+                border: item.highlighted ? "2px solid var(--accent)" : undefined,
               }}
             >
               {item.featured && (
