@@ -89,12 +89,12 @@ export default function Dashboard() {
           </h2>
           {user.role === "speaker" && selectedTalk && (
             <div style={{ marginTop: 6 }}>
-              <span style={{ color: "var(--accent-text)", fontSize: "0.95rem", fontWeight: 600 }}>
-                {selectedTalk.title}
-              </span>
-              <span style={{ color: "var(--muted)", fontSize: "0.85rem", marginLeft: 8 }}>
+              <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
                 {selectedTalk.track}
               </span>
+              <div style={{ color: "var(--accent-text)", fontSize: "0.95rem", fontWeight: 600 }}>
+                {selectedTalk.title}
+              </div>
             </div>
           )}
           {user.role === "organizer" && (
