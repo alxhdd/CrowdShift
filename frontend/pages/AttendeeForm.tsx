@@ -141,7 +141,7 @@ export default function AttendeeForm() {
             </Button>
 
             <p style={{ textAlign: "center", margin: 0 }}>
-              <Link to="/">Back to login</Link>
+              <Link to="/login">Back to login</Link>
             </p>
           </div>
         </div>

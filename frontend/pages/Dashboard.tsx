@@ -53,53 +53,82 @@ export default function Dashboard() {
       <div className="dashboard">
         <div style={{
           margin: "16px",
-          padding: "16px 20px",
-          fontSize: "1rem",
-          fontWeight: 600,
-          fontFamily: '"Space Grotesk", sans-serif',
-          color: "var(--text)",
+          padding: "24px 28px",
           background: "var(--stat-bg)",
           border: "1px solid var(--border)",
           borderRadius: 12,
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 12,
+          position: "relative",
         }}>
-
-          <span style={{ opacity: 0.8 }}>Hi {user.name}, here is your overview</span>
+          <span style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            background: "var(--accent)",
+            color: "var(--cta-text)",
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: '"Space Grotesk", sans-serif',
+            padding: "0 20px",
+            borderRadius: "0 12px 12px 0",
+            textTransform: "capitalize",
+            letterSpacing: "0.02em",
+          }}>
+            {user.role}
+          </span>
+          <h2 style={{
+            margin: 0,
+            fontSize: "1.5rem",
+            fontFamily: '"Space Grotesk", sans-serif',
+            fontWeight: 700,
+            color: "var(--text)",
+          }}>
+            {user.name}
+          </h2>
           {user.role === "speaker" && selectedTalk && (
-            <span style={{ color: "var(--muted)", fontSize: "0.85rem", fontWeight: 400 }}>
-              {selectedTalk.title} — {selectedTalk.track}
-            </span>
+            <div style={{ marginTop: 6 }}>
+              <span style={{ color: "var(--accent-text)", fontSize: "0.95rem", fontWeight: 600 }}>
+                {selectedTalk.title}
+              </span>
+              <span style={{ color: "var(--muted)", fontSize: "0.85rem", marginLeft: 8 }}>
+                {selectedTalk.track}
+              </span>
+            </div>
           )}
           {user.role === "organizer" && (
-            <span style={{ color: "var(--muted)", fontSize: "0.85rem", fontWeight: 400 }}>React Summit + JSNation 2026</span>
+            <div style={{ marginTop: 6 }}>
+              <span style={{ color: "var(--accent-text)", fontSize: "0.95rem", fontWeight: 600 }}>
+                React Summit + JSNation
+              </span>
+              <span style={{ color: "var(--muted)", fontSize: "0.85rem", marginLeft: 8 }}>
+                2026
+              </span>
+            </div>
           )}
           {user.role === "sponsor" && (
-            <span style={{ color: "var(--muted)", fontSize: "0.85rem", fontWeight: 400 }}>Audience Intelligence</span>
+            <div style={{ marginTop: 6 }}>
+              <span style={{ color: "var(--accent-text)", fontSize: "0.95rem", fontWeight: 600 }}>
+                Audience Intelligence
+              </span>
+              <span style={{ color: "var(--muted)", fontSize: "0.85rem", marginLeft: 8 }}>
+                React Summit + JSNation 2026
+              </span>
+            </div>
           )}
           {user.role === "speaker" && user.talks.length > 1 && (
-            <select value={talkId ?? ""} onChange={(e) => setTalkId(Number(e.target.value))} style={{ marginLeft: "auto" }}>
+            <select
+              value={talkId ?? ""}
+              onChange={(e) => setTalkId(Number(e.target.value))}
+              style={{ marginTop: 12, fontSize: "0.85rem", padding: "4px 8px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--card-bg)", color: "var(--text)" }}
+            >
               {user.talks.map((t) => (
                 <option key={t.id} value={t.id}>{t.title}</option>
               ))}
             </select>
           )}
-          <span style={{
-            marginLeft: "auto",
-            background: "var(--accent)",
-            color: "var(--cta-text)",
-            fontSize: 11,
-            fontWeight: 600,
-            fontFamily: '"Space Grotesk", sans-serif',
-            padding: "3px 12px",
-            borderRadius: 999,
-            textTransform: "capitalize",
-          }}>
-            {user.role}
-          </span>
-          </div>
+        </div>
         <DashboardKpiBar user={user} />
         <div className="dashboard-columns">
           <div className="dashboard-left">
