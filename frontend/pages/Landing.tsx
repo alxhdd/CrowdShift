@@ -46,7 +46,7 @@ export default function Landing() {
               fillMode="outline"
               size="large"
               rounded="full"
-              onClick={() => window.open("", "_blank")}
+              onClick={() => e("/login")}
             >
               How it works
             </Button>

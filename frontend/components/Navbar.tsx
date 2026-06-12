@@ -51,7 +51,7 @@ export default function Navbar() {
         {isLanding && (
           <>
             <span className="nav-hide-mobile">
-              <Button fillMode="flat" onClick={() => window.open("https://youtu.be/LepsNZo-VHA", "_blank")}>
+              <Button fillMode="flat" onClick={() => t("/login")}>
                 How it works
               </Button>
             </span>
