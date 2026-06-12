@@ -1,10 +1,10 @@
 {
-  "public_name": "CrowdShift- AI audience intelligent platform.",
-  "kicker": "Built for Hackaton-Progress-x-GitNation",
+  "public_name": "CrowdShift - AI audience intelligence platform.",
+  "kicker": "Built for the Progress x GitNation Hackathon",
   "url": "https://crowdshift.online",
   "description": "An AI audience-intelligence platform that gives speakers a living brief of who's in the room — from ticket #1 to showtime. Attendees can submit pre-talk questions. Speakers can reach back (organizer-gated). Organizers and sponsors get role-filtered views.",
   "skip": false,
-  "portfolio": false,
+  "portfolio": true,
   "card_type": "standard",
   "tech": ["React", "TypeScript", "Vite", "KendoReact", "FastAPI", "Python", "SQLite", "Gemini", "Docker"],
   "detail_description": [
