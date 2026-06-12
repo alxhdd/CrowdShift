@@ -43,3 +43,4 @@ htmlcov/
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+frontend/kendo-ui-license.txt
