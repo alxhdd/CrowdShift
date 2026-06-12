@@ -1,15 +1,21 @@
 {
   "public_name": "CrowdShift- AI audience intelligent platform.",
   "kicker": "Built for Hackaton-Progress-x-GitNation",
-  "url": "#",
+  "url": "https://crowdshift.online",
   "description": "An AI audience-intelligence platform that gives speakers a living brief of who's in the room — from ticket #1 to showtime. Attendees can submit pre-talk questions. Speakers can reach back (organizer-gated). Organizers and sponsors get role-filtered views.",
   "skip": false,
   "portfolio": false,
   "card_type": "standard",
-  "tech": [],
-  "detail_description": [],
+  "tech": ["React", "TypeScript", "Vite", "KendoReact", "FastAPI", "Python", "SQLite", "Gemini", "Docker"],
+  "detail_description": [
+  "Conference speakers prepare talks weeks in advance for an audience they've never seen — the first real feedback arrives during Q&A, when it's too late to adapt. CrowdShift closes that gap by turning registration data, which already exists in every ticketing system, into live audience intelligence.",
+  "As attendees register, CrowdShift snapshots the audience at capacity milestones (25/50/75/100%) and tracks how it evolves: a talk that starts senior-heavy can be 55% junior developers by sold-out. A timeline slider lets speakers scrub through these snapshots and watch the demographics shift in animated charts. At any point, an AI agent (Gemini) reads the current snapshot and generates a structured brief — who's in the room, what changed since the last milestone, and concrete recommendations like which comparisons to lead with and which deep-dives to cut.",
+  "The product serves three roles with strictly separated data access. Speakers see aggregate demographics and pre-submitted, upvotable attendee questions for their own talk. Organizers get the full 500-row attendee grid with live filtering. Sponsors see anonymized cohorts only — segments under five people are suppressed (k-anonymity), and the separation is enforced server-side with role-scoped endpoints and token auth, not hidden in the UI. Attendees participate too: with just a ticket ID they can submit questions to speakers before the event, creating a feedback loop between the room and the stage before anyone walks on it.",
+  "Built in 24 hours for the Progress x GitNation hackathon: React + TypeScript + Vite frontend on KendoReact (Grid, Charts, Slider, and 10+ components, fully re-themed with a custom dark/light design system), FastAPI + SQLite backend with 500 seeded attendees whose registration behavior encodes realistic demographic waves, and a brief-generation pipeline with structured JSON output, caching, and a rules-based fallback so the demo can't fail on a flaky API call."
+  ],
   "links": [
-    { "label": "live demo", "url": "#" },
-    { "label": "case study", "url": "#" }
+    { "label": "live demo", "url": "https://crowdshift.online" },
+    { "label": "hackathon page", "url": "https://www.hackathonparty.com/hackathons/43/projects/595" },
+    { "label": "github", "url": "https://github.com/alxhdd/CrowdShift" }
   ]
 }
