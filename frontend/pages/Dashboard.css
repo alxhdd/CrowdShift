@@ -22,7 +22,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  align-items: start;
   padding: 16px;
 }
 
@@ -61,6 +60,7 @@
 }
 
 .panel {
+  flex: 1;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-top: 3px solid var(--card-accent);
@@ -215,6 +215,7 @@
 }
 
 .brief-card {
+  flex: 1;
   background: #1a1a1d;
   border-radius: 12px;
   padding: 18px;
