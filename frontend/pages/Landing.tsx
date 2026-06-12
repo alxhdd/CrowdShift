@@ -46,7 +46,7 @@ export default function Landing() {
               fillMode="outline"
               size="large"
               rounded="full"
-              onClick={() => e("/login")}
+              onClick={() => navigate("/login")}
             >
               How it works
             </Button>

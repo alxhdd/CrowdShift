@@ -51,7 +51,7 @@ export default function Navbar() {
         {isLanding && (
           <>
             <span className="nav-hide-mobile">
-              <Button fillMode="flat" onClick={() => t("/login")}>
+              <Button fillMode="flat" onClick={() => navigate("/login")}>
                 How it works
               </Button>
             </span>
