@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from models import get_db
+from routes.deps import create_token
 
 router = APIRouter(prefix="/api", tags=["auth"])
 
@@ -39,6 +40,7 @@ def login(body: LoginRequest):
             "name": user["name"],
             "role": "speaker",
             "talks": [dict(t) for t in talks],
+            "token": create_token("speaker"),
         }
 
     if role == "organizer":
@@ -55,6 +57,7 @@ def login(body: LoginRequest):
             "name": user["name"],
             "role": "organizer",
             "talks": [dict(t) for t in talks],
+            "token": create_token("organizer"),
         }
 
     if role == "sponsor":
@@ -71,6 +74,7 @@ def login(body: LoginRequest):
             "name": user["name"],
             "role": "sponsor",
             "talks": [dict(t) for t in talks],
+            "token": create_token("sponsor"),
         }
 
     db.close()

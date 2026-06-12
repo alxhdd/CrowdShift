@@ -1,7 +1,8 @@
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from models import get_db
+from routes.deps import require_role
 
 router = APIRouter(prefix="/api", tags=["attendees"])
 
@@ -79,7 +80,7 @@ def lookup_attendee(ticket_id: str):
 
 
 @router.get("/attendees")
-def list_attendees():
+def list_attendees(role=Depends(require_role("organizer"))):
     db = get_db()
     rows = db.execute(
         """SELECT id, ticket_id, name, email, age, role, company, country,
@@ -94,7 +95,7 @@ def list_attendees():
 
 
 @router.get("/attendees/segments")
-def attendee_segments():
+def attendee_segments(role=Depends(require_role("speaker", "organizer", "sponsor"))):
     db = get_db()
 
     rows = db.execute(
@@ -150,7 +151,7 @@ def attendee_segments():
 
 
 @router.get("/attendees/cohorts")
-def attendee_cohorts():
+def attendee_cohorts(role=Depends(require_role("organizer", "sponsor"))):
     db = get_db()
 
     rows = db.execute(
