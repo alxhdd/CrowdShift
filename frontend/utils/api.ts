@@ -19,10 +19,6 @@ export const api = {
       body: JSON.stringify({ role, user_id }),
     }),
 
-  talks: () => request<any[]>("/api/talks"),
-
-  talk: (id: number) => request<any>(`/api/talks/${id}`),
-
   snapshots: (talkId: number) =>
     request<any[]>(`/api/talks/${talkId}/snapshots`),
 
@@ -53,6 +49,11 @@ export const api = {
   attendees: () => request<any[]>("/api/attendees"),
 
   segments: () => request<any>("/api/attendees/segments"),
+
+  cohorts: () =>
+    request<{ segment: string; count: number; pct: number; top_interest: string; evaluating_pct: number; top_company_size: string }[]>(
+      "/api/attendees/cohorts"
+    ),
 
   lookupAttendee: (ticketId: string) =>
     request<{ name: string; registered_talks: { id: number; title: string; track: string }[] }>(

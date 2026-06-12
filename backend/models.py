@@ -37,7 +37,14 @@ CREATE TABLE IF NOT EXISTS attendees (
     registered_at TEXT NOT NULL,
     tech_interests TEXT,
     experience_years INTEGER,
-    goal TEXT
+    goal TEXT,
+    familiarity INTEGER DEFAULT 3,
+    expectations TEXT,
+    first_time INTEGER DEFAULT 1,
+    attendance_mode TEXT DEFAULT 'in-person',
+    company_size TEXT DEFAULT '11-50',
+    evaluating INTEGER DEFAULT 0,
+    evaluating_category TEXT
 );
 
 CREATE TABLE IF NOT EXISTS registrations (

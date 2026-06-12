@@ -2,22 +2,7 @@ export interface User {
   user_id: number;
   name: string;
   role: "speaker" | "organizer" | "sponsor";
-  talks: TalkSummary[];
-}
-
-export interface TalkSummary {
-  id: number;
-  title: string;
-  track: string;
-}
-
-export interface Talk {
-  id: number;
-  title: string;
-  track: string;
-  description: string;
-  capacity: number;
-  speaker_name: string;
+  talks: { id: number; title: string; track: string }[];
 }
 
 export interface Snapshot {
@@ -36,6 +21,10 @@ export interface Demographics {
   tech_stacks: { name: string; count: number }[];
   roles: { name: string; count: number }[];
   goals: { name: string; count: number }[];
+  familiarity_avg: number;
+  first_time_pct: number;
+  online_count: number;
+  avg_experience: number;
 }
 
 export interface Brief {
@@ -59,6 +48,7 @@ export interface Segments {
   tech_stacks: { name: string; count: number }[];
   roles: { name: string; count: number }[];
   countries: { name: string; count: number }[];
+  avg_experience: number;
 }
 
 export interface Attendee {
@@ -75,4 +65,11 @@ export interface Attendee {
   experience_years: number;
   goal: string;
   tech_interests: string;
+  familiarity: number;
+  expectations: string;
+  first_time: number;
+  attendance_mode: string;
+  company_size: string;
+  evaluating: number;
+  evaluating_category: string | null;
 }

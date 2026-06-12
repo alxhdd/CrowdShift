@@ -43,10 +43,10 @@ Attendee demographics:
 
 Generate a speaker brief as JSON with these fields:
 {{
-  "headline": "1-line TL;DR (max 15 words, be punchy)",
-  "audience_profile": "2-3 sentences describing WHO is in the room — experience level, roles, interests",
+  "headline": "TL;DR (be punchy)",
+  "audience_profile": "3-5 sentences describing WHO is in the room — experience level, roles, interests",
   "shift_alert": "if previous snapshot exists: what changed since then? If first snapshot: null",
-  "recommendations": ["3 specific, actionable tips for the speaker. Be concrete — name technologies, suggest slide changes, mention real pain points"],
+  "recommendations": ["3-5 specific, actionable tips for the speaker. Be concrete — name technologies, suggest slide changes, mention real pain points"],
   "tone": "technical" | "introductory" | "balanced"
 }}
 
@@ -69,7 +69,9 @@ Rules:
     }
 
     if not GEMINI_KEY:
-        return _fallback_brief(talk_title, snapshot_label, total, age_groups, tech_stacks, roles)
+        brief = _fallback_brief(talk_title, snapshot_label, total, age_groups, tech_stacks, roles)
+        brief["fallback"] = True
+        return brief
 
     url = f"{GEMINI_BASE}/chat/completions"
     req = urllib.request.Request(
@@ -98,7 +100,9 @@ Rules:
             return json.loads(raw)
     except Exception as e:
         print(f"Gemini API error: {e}")
-        return _fallback_brief(talk_title, snapshot_label, total, age_groups, tech_stacks, roles)
+        brief = _fallback_brief(talk_title, snapshot_label, total, age_groups, tech_stacks, roles)
+        brief["fallback"] = True
+        return brief
 
 
 def _fallback_brief(talk_title: str, label: str, total: int,

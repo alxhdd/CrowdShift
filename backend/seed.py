@@ -44,6 +44,27 @@ GOALS = [
     "Evaluating tools for my team", "Speaker fan", "Sent by employer",
 ]
 
+EXPECTATIONS_POOL = [
+    "Migrate off Redux to something lighter",
+    "Understand signals vs hooks tradeoffs",
+    "Learn server component patterns",
+    "Improve CI/CD pipeline performance",
+    "Get better at TypeScript generics",
+    "Figure out micro-frontend architecture",
+    "Build a real-time collaboration feature",
+    "Reduce bundle size in production",
+    "Learn testing best practices for async code",
+    "Understand React Server Components deeply",
+    "Optimize API response times",
+    "Learn about edge computing and SSR",
+    "Get started with WebAssembly",
+    "Improve accessibility in our design system",
+    "Transition from REST to GraphQL",
+]
+
+COMPANY_SIZES = ["1-10", "11-50", "51-200", "200+"]
+EVALUATING_CATEGORIES = ["State management", "API framework", "Testing", "Hosting", "Monitoring", "CSS framework"]
+
 COUNTRIES = [
     ("United States", 22), ("India", 14), ("United Kingdom", 10),
     ("Germany", 9), ("Poland", 8), ("Brazil", 6), ("Canada", 5),
@@ -289,6 +310,12 @@ def run():
                        "Regular": random.randint(2, 8),
                        "Student": random.randint(0, 2)}
 
+            familiarity_map = {"Early Bird": random.randint(3, 5),
+                               "Regular": random.randint(2, 4),
+                               "Student": random.randint(1, 3)}
+
+            first_time_map = {"Early Bird": 0.35, "Regular": 0.55, "Student": 0.80}
+
             attendee = {
                 "ticket_id": f"TKT-{a_idx:04d}",
                 "name": fake.name(),
@@ -305,6 +332,13 @@ def run():
                 "tech_interests": json.dumps(interests),
                 "experience_years": exp_map[ticket],
                 "goal": random.choice(GOALS),
+                "familiarity": familiarity_map[ticket],
+                "expectations": random.choice(EXPECTATIONS_POOL),
+                "first_time": 1 if random.random() < first_time_map[ticket] else 0,
+                "attendance_mode": "in-person" if random.random() < 0.85 else "online",
+                "company_size": random.choices(COMPANY_SIZES, weights=[0.25, 0.35, 0.25, 0.15])[0],
+                "evaluating": 1 if random.random() < 0.35 else 0,
+                "evaluating_category": random.choice(EVALUATING_CATEGORIES) if random.random() < 0.35 else None,
             }
             attendees.append(attendee)
             a_idx += 1
@@ -324,13 +358,19 @@ def run():
         cur = conn.execute(
             """INSERT INTO attendees
                (ticket_id, name, email, age, role, company, country,
-                ticket_type, registered_at, tech_interests, experience_years, goal)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                ticket_type, registered_at, tech_interests, experience_years, goal,
+                familiarity, expectations, first_time, attendance_mode, company_size,
+                evaluating, evaluating_category)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (a_dict["ticket_id"], a_dict["name"], a_dict["email"],
              a_dict["age"], a_dict["role"], a_dict["company"],
              a_dict["country"], a_dict["ticket_type"],
              a_dict["registered_at"], a_dict["tech_interests"],
-             a_dict["experience_years"], a_dict["goal"]),
+             a_dict["experience_years"], a_dict["goal"],
+             a_dict["familiarity"], a_dict["expectations"],
+             a_dict["first_time"], a_dict["attendance_mode"],
+             a_dict["company_size"], a_dict["evaluating"],
+             a_dict["evaluating_category"]),
         )
         attendee_db_id = cur.lastrowid
 
@@ -425,8 +465,7 @@ def run():
         if i >= len(sarah_attendees):
             break
         attendee_id = sarah_attendees[i]["id"]
-        sub_time = (SALES_OPEN + timedelta(days=random.randint(10, 65),
-                                           hours=random.randint(7, 22))).isoformat()
+        sub_time = datetime(2026, 6, 11, random.randint(8, 20), random.randint(0, 59)).isoformat()
         conn.execute(
             """INSERT INTO questions (attendee_id, talk_id, question_text, submitted_at)
                VALUES (?, ?, ?, ?)""",
@@ -447,8 +486,7 @@ def run():
         if i >= len(marcus_attendees):
             break
         attendee_id = marcus_attendees[i]["id"]
-        sub_time = (SALES_OPEN + timedelta(days=random.randint(10, 65),
-                                           hours=random.randint(7, 22))).isoformat()
+        sub_time = datetime(2026, 6, 11, random.randint(8, 20), random.randint(0, 59)).isoformat()
         conn.execute(
             """INSERT INTO questions (attendee_id, talk_id, question_text, submitted_at)
                VALUES (?, ?, ?, ?)""",

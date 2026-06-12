@@ -26,10 +26,10 @@ Speakers prepare talks months in advance, then walk on stage knowing almost noth
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19 + TypeScript, Vite, React Router |
+| Frontend | React 18 + TypeScript, Vite, React Router |
 | UI Components | [Kendo UI for React](https://www.telerik.com/kendo-react-ui) (required by hackathon) |
 | Backend | FastAPI (Python), SQLite |
-| AI Agent | Gemini 2.5 Flash via OpenAI-compatible API |
+| AI Agent | gemini-3.1-flash-lite via OpenAI-compatible API |
 | Infrastructure | Docker + Docker Compose |
 
 ---

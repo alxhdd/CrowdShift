@@ -34,8 +34,8 @@ def submit_question(body: QuestionRequest):
         db.close()
         raise HTTPException(status_code=400, detail="Not registered for this talk")
 
-    from datetime import datetime
-    now = datetime.utcnow().isoformat()
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
 
     db.execute(
         """INSERT INTO questions (attendee_id, talk_id, question_text, submitted_at)
@@ -84,7 +84,8 @@ def list_attendees():
     rows = db.execute(
         """SELECT id, ticket_id, name, email, age, role, company, country,
                   ticket_type, registered_at, experience_years, goal,
-                  tech_interests
+                  tech_interests, familiarity, expectations, first_time,
+                  attendance_mode, company_size, evaluating, evaluating_category
            FROM attendees
            ORDER BY registered_at ASC"""
     ).fetchall()
@@ -105,6 +106,7 @@ def attendee_segments():
     role_counter = {}
     country_counter = {}
     age_groups = {"18-25": 0, "26-35": 0, "36-45": 0, "46+": 0}
+    exp_sum = 0
 
     for r in rows:
         try:
@@ -130,14 +132,79 @@ def attendee_segments():
         else:
             age_groups["46+"] += 1
 
+        exp_sum += r["experience_years"] or 0
+
     tech_sorted = sorted(tech_counter.items(), key=lambda x: x[1], reverse=True)
     role_sorted = sorted(role_counter.items(), key=lambda x: x[1], reverse=True)
     country_sorted = sorted(country_counter.items(), key=lambda x: x[1], reverse=True)
+    total = len(rows)
 
     return {
-        "total": len(rows),
+        "total": total,
         "age_groups": age_groups,
         "tech_stacks": [{"name": t, "count": c} for t, c in tech_sorted[:10]],
         "roles": [{"name": t, "count": c} for t, c in role_sorted],
         "countries": [{"name": t, "count": c} for t, c in country_sorted[:10]],
+        "avg_experience": round(exp_sum / total, 1) if total > 0 else 0,
     }
+
+
+@router.get("/attendees/cohorts")
+def attendee_cohorts():
+    db = get_db()
+
+    rows = db.execute(
+        "SELECT role, experience_years, tech_interests, goal, company_size, evaluating FROM attendees"
+    ).fetchall()
+
+    total = len(rows)
+    cohorts = {}
+
+    for r in rows:
+        role = (r["role"] or "Other").strip()
+        exp = r["experience_years"] or 0
+        if exp <= 3:
+            band = "0-3 yrs"
+        elif exp <= 8:
+            band = "4-8 yrs"
+        else:
+            band = "9+ yrs"
+
+        cs = r["company_size"] or "—"
+        key = f"{role}, {band}"
+
+        try:
+            interests = json.loads(r["tech_interests"] or "[]")
+        except (json.JSONDecodeError, TypeError):
+            interests = []
+
+        evaluating = r["evaluating"] if r["evaluating"] else 0
+
+        if key not in cohorts:
+            cohorts[key] = {"count": 0, "interests": {}, "evaluating": 0, "company_sizes": {}}
+
+        cohorts[key]["count"] += 1
+        if evaluating:
+            cohorts[key]["evaluating"] += 1
+        cohorts[key]["company_sizes"][cs] = cohorts[key]["company_sizes"].get(cs, 0) + 1
+        for tech in interests:
+            cohorts[key]["interests"][tech] = cohorts[key]["interests"].get(tech, 0) + 1
+
+    db.close()
+
+    result = []
+    for name, data in sorted(cohorts.items(), key=lambda x: x[1]["count"], reverse=True):
+        if data["count"] < 5:
+            continue
+        top = sorted(data["interests"].items(), key=lambda x: x[1], reverse=True)
+        top_cs = sorted(data["company_sizes"].items(), key=lambda x: x[1], reverse=True)
+        result.append({
+            "segment": name,
+            "count": data["count"],
+            "pct": round(data["count"] / total * 100, 1),
+            "top_interest": top[0][0] if top else "—",
+            "evaluating_pct": round(data["evaluating"] / data["count"] * 100) if data["count"] > 0 else 0,
+            "top_company_size": top_cs[0][0] if top_cs else "—",
+        })
+
+    return result

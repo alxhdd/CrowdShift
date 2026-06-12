@@ -79,9 +79,28 @@ export default function AttendeeForm() {
           <h1 style={{ textAlign: "center", margin: "0 0 4px", fontSize: "1.5rem", color: "var(--text)" }}>
             Ask a Question
           </h1>
-          <p style={{ textAlign: "center", color: "var(--muted)", marginBottom: 28, fontSize: "0.9rem" }}>
+          <p style={{ textAlign: "center", color: "var(--muted)", marginBottom: 20, fontSize: "0.9rem" }}>
             Identify yourself to get started
           </p>
+
+          <div style={{
+            border: "1px dashed var(--border)",
+            borderRadius: 8,
+            padding: "12px 16px",
+            marginBottom: 20,
+            background: "var(--stat-bg)",
+          }}>
+            <p style={{ margin: "0 0 6px", fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--muted)" }}>
+              Demo credentials
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.85rem", color: "var(--text)" }}>
+              <span><strong>Jeff Owens</strong> — TKT-0018</span>
+              <span><strong>Katie Suarez</strong> — TKT-0082</span>
+            </div>
+            <p style={{ margin: "8px 0 0", fontSize: "0.75rem", color: "var(--muted)" }}>
+              Submit a question and it will appear live in the speaker's dashboard.
+            </p>
+          </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
@@ -90,7 +109,7 @@ export default function AttendeeForm() {
               </label>
               <TextBox
                 value={name}
-                onChange={(e) => setName(e.value)}
+                onChange={(e) => setName(String(e.value ?? ""))}
                 placeholder="Your full name"
                 style={{ width: "100%" }}
               />
@@ -102,7 +121,7 @@ export default function AttendeeForm() {
               </label>
               <TextBox
                 value={ticketId}
-                onChange={(e) => setTicketId(e.value)}
+                onChange={(e) => setTicketId(String(e.value ?? ""))}
                 placeholder="e.g. TKT-0042"
                 style={{ width: "100%" }}
               />

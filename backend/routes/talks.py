@@ -74,11 +74,16 @@ def talk_demographics(talk_id: int, snapshot_id: int):
             "tech_stacks": [],
             "roles": [],
             "goals": [],
+            "familiarity_avg": 0,
+            "first_time_pct": 0,
+            "online_count": 0,
+            "avg_experience": 0,
         }
 
     rows = db.execute(
         """SELECT a.age, a.role, a.tech_interests, a.goal, a.ticket_type,
-                  a.experience_years, a.company, a.country
+                  a.experience_years, a.company, a.country,
+                  a.familiarity, a.first_time, a.attendance_mode
            FROM attendees a
            JOIN registrations r ON r.attendee_id = a.id
            WHERE r.talk_id = ?
@@ -91,6 +96,11 @@ def talk_demographics(talk_id: int, snapshot_id: int):
     tech_counter = {}
     role_counter = {}
     goal_counter = {}
+    familiarity_sum = 0
+    familiarity_count = 0
+    first_time_count = 0
+    online_count = 0
+    exp_sum = 0
 
     for r in rows:
         age = r["age"] or 0
@@ -117,6 +127,19 @@ def talk_demographics(talk_id: int, snapshot_id: int):
         if goal:
             goal_counter[goal] = goal_counter.get(goal, 0) + 1
 
+        fam = r["familiarity"]
+        if fam is not None:
+            familiarity_sum += fam
+            familiarity_count += 1
+
+        if r["first_time"]:
+            first_time_count += 1
+
+        if r["attendance_mode"] == "online":
+            online_count += 1
+
+        exp_sum += r["experience_years"] or 0
+
     # Sort by count descending
     tech_sorted = sorted(tech_counter.items(), key=lambda x: x[1], reverse=True)
     role_sorted = sorted(role_counter.items(), key=lambda x: x[1], reverse=True)
@@ -129,6 +152,10 @@ def talk_demographics(talk_id: int, snapshot_id: int):
         "tech_stacks": [{"name": t, "count": c} for t, c in tech_sorted[:10]],
         "roles": [{"name": t, "count": c} for t, c in role_sorted],
         "goals": [{"name": t, "count": c} for t, c in goal_sorted[:8]],
+        "familiarity_avg": round(familiarity_sum / familiarity_count, 1) if familiarity_count > 0 else 0,
+        "first_time_pct": round(first_time_count / total * 100) if total > 0 else 0,
+        "online_count": online_count,
+        "avg_experience": round(exp_sum / total, 1) if total > 0 else 0,
     }
 
 
@@ -163,7 +190,7 @@ def talk_brief(talk_id: int, snapshot_id: int):
 
 @router.post("/talks/{talk_id}/brief")
 def generate_talk_brief(talk_id: int, snapshot_id: int):
-    from datetime import datetime
+    from datetime import datetime, timezone
     from agent import generate_brief
 
     db = get_db()
@@ -247,7 +274,31 @@ def generate_talk_brief(talk_id: int, snapshot_id: int):
         prev_total=prev_row["attendee_count"] if prev_row else None,
     )
 
-    now = datetime.utcnow().isoformat()
+    if brief.get("fallback"):
+        cached = db.execute(
+            """SELECT id, headline, audience_profile, shift_alert,
+                       recommendations, tone, generated_at
+               FROM briefs
+               WHERE talk_id = ? AND snapshot_id = ?""",
+            (talk_id, snap["id"]),
+        ).fetchone()
+        db.close()
+        if cached:
+            result = dict(cached)
+            try:
+                result["recommendations"] = json.loads(result["recommendations"] or "[]")
+            except (json.JSONDecodeError, TypeError):
+                result["recommendations"] = []
+            return result
+        return {
+            "headline": "Brief unavailable",
+            "audience_profile": "Could not generate brief. Try again later.",
+            "shift_alert": None,
+            "recommendations": [],
+            "tone": "neutral",
+        }
+
+    now = datetime.now(timezone.utc).isoformat()
     db.execute(
         """INSERT OR REPLACE INTO briefs
            (talk_id, snapshot_id, headline, audience_profile,

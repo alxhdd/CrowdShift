@@ -130,13 +130,6 @@ select {
   box-shadow: 0 0 20px var(--cta-glow);
 }
 
-[data-theme="dark"] .cta-btn-secondary:hover {
-  box-shadow: 0 0 20px rgba(235, 151, 131, 0.35);
-}
-[data-theme="light"] .cta-btn-secondary:hover {
-  box-shadow: 0 0 20px rgba(245, 235, 124, 0.35);
-}
-
 .step-card {
   backdrop-filter: blur(8px);
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -193,6 +186,20 @@ section {
 .k-appbar.k-appbar-base {
   background-color: transparent !important;
 }
+.k-chart-surface > svg > g > path:first-of-type {
+  fill: transparent;
+  width: 100%;
+}
+
+.k-grid,
+.k-grid .k-table,
+.k-grid .k-grid-content,
+.k-grid .k-table-row {
+  background: transparent;
+}
+.k-grid .k-table-alt-row { background: rgba(26, 26, 29, 0.025); }  /* keep zebra, barely */
+.k-grid-header, .k-grid-header th { background: transparent; }
+.k-pager { background: transparent; }
 
 .nav-glass {
   background: transparent !important;

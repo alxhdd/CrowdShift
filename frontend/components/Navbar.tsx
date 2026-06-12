@@ -29,10 +29,6 @@ export default function Navbar() {
   const isLanding = location.pathname === "/";
   const isDashboard = location.pathname === "/dashboard";
 
-  if (isDashboard) {
-    return null;
-  }
-
   return (
     <AppBar
       className="nav-glass"
@@ -71,9 +67,14 @@ export default function Navbar() {
             </span>
           </>
         )}
-        {!isLanding && (
+        {!isLanding && !isDashboard && (
           <Button fillMode="flat" onClick={() => navigate("/")}>
             ← Home
+          </Button>
+        )}
+        {isDashboard && (
+          <Button fillMode="flat" onClick={() => navigate("/")}>
+            Logout
           </Button>
         )}
         <ThemeToggle />

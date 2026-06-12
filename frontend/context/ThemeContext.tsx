@@ -41,6 +41,7 @@ const THEME_VARS: Record<ThemeMode, Record<string, string>> = {
     "--card-text-alt": "#242428",
     "--card-text-accent": "#242428",
     "--card-border": "rgba(255, 255, 255, 0.07)",
+    "--card-accent": "#c7c4c2",
 
     "--border": "#4a4a51",
     "--muted": "#9a9996",
@@ -82,6 +83,7 @@ const THEME_VARS: Record<ThemeMode, Record<string, string>> = {
     "--card-text-alt": "#242428",
     "--card-text-accent": "#faf8f3",
     "--card-border": "rgba(26, 26, 29, 0.08)",
+    "--card-accent": "#c7c4c2",
 
     "--border": "#d9d7d4",
     "--muted": "rgba(26, 26, 29, 0.55)",
@@ -115,6 +117,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.style.setProperty(key, value);
     });
     localStorage.setItem("crowdshift-theme", mode);
+
+    const darkLink = document.getElementById("kendo-theme-dark") as HTMLLinkElement | null;
+    const lightLink = document.getElementById("kendo-theme-light") as HTMLLinkElement | null;
+    if (darkLink) darkLink.disabled = mode !== "dark";
+    if (lightLink) lightLink.disabled = mode !== "light";
 
     const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
     if (favicon) {

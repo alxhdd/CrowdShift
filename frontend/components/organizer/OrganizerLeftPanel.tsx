@@ -1,37 +1,113 @@
 import { useState, useEffect } from "react";
-import { Grid, GridColumn } from "@progress/kendo-react-grid";
+import {
+  Chart,
+  ChartSeries,
+  ChartSeriesItem,
+  ChartLegend,
+  ChartCategoryAxis,
+  ChartCategoryAxisItem,
+} from "@progress/kendo-react-charts";
 import { api } from "../../utils/api";
-import { Attendee } from "../../types";
+import { Segments } from "../../types";
+
+const DONUT_COLORS = ["#f5eb7c", "#eb9783", "#8e8e95", "#b84c3a"];
+const BAR_COLORS = ["#f5eb7c", "#f5eb7c", "#f5eb7c", "#efe6c0", "#efe6c0", "#efe6c0"];
 
 export default function OrganizerLeftPanel() {
-  const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const [segments, setSegments] = useState<Segments | null>(null);
+  const [hiddenAges, setHiddenAges] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    api.attendees().then(setAttendees);
+    api.segments().then(setSegments);
   }, []);
 
+  const sortedTech = segments
+    ? [...segments.tech_stacks].sort((a, b) => b.count - a.count).slice(0, 6)
+    : [];
+
+  const ageData = segments
+    ? Object.entries(segments.age_groups)
+        .map(([age, count], i) => {
+          const pct = segments.total > 0 ? Math.round((count / segments.total) * 100) : 0;
+          return {
+            range: `${age} (${pct}%)`,
+            ageKey: age,
+            count,
+            color: DONUT_COLORS[i % DONUT_COLORS.length],
+          };
+        })
+        .filter((d) => d.count > 0)
+    : [];
+
+  const activeCount = ageData
+    .filter((d) => !hiddenAges.has(d.ageKey))
+    .reduce((sum, d) => sum + d.count, 0);
+
+  const handleDonutClick = (e: any) => {
+    const label = e.category || e.text || e.point?.category || "";
+    const ageKey = ageData.find((d) => d.range === label)?.ageKey;
+    if (!ageKey) return;
+    setHiddenAges((prev) => {
+      const next = new Set(prev);
+      if (next.has(ageKey)) {
+        next.delete(ageKey);
+      } else {
+        next.add(ageKey);
+      }
+      if (next.size === ageData.length) return new Set();
+      return next;
+    });
+  };
+
+  const visibleAgeData = ageData.map((d) => ({
+    ...d,
+    color: hiddenAges.has(d.ageKey) ? "#4a4d56" : d.color,
+  }));
+
   return (
-    <div className="panel-card" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      <h3>All Attendees ({attendees.length})</h3>
-      <div style={{ flex: 1, overflow: "auto" }}>
-        <Grid
-          data={attendees.slice(0, 100)}
-          style={{ height: "100%", fontSize: "0.8rem" }}
-        >
-          <GridColumn field="name" title="Name" width="150px" />
-          <GridColumn field="email" title="Email" width="180px" />
-          <GridColumn field="role" title="Role" width="140px" />
-          <GridColumn field="company" title="Company" width="130px" />
-          <GridColumn field="country" title="Country" width="90px" />
-          <GridColumn field="ticket_type" title="Ticket" width="90px" />
-          <GridColumn field="tech_interests" title="Tech" width="180px" />
-          <GridColumn field="experience_years" title="Exp (yrs)" width="80px" />
-          <GridColumn field="goal" title="Goal" width="140px" />
-        </Grid>
+    <>
+      <div className="panel">
+        <h3>Top Tech Stacks</h3>
+        <Chart transitions={true} style={{ height: 260 }}>
+          <ChartSeries>
+            <ChartSeriesItem
+              type="bar"
+              data={sortedTech}
+              field="count"
+              categoryField="name"
+              color={(p: any) => BAR_COLORS[p.index] ?? "#efe6c0"}
+              labels={{ visible: true, position: "outsideEnd", font: "11px inherit" }}
+              border={{ width: 0 }}
+            />
+          </ChartSeries>
+          <ChartCategoryAxis>
+            <ChartCategoryAxisItem majorGridLines={{ visible: false }} />
+          </ChartCategoryAxis>
+        </Chart>
       </div>
-      <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: 8 }}>
-        Showing first 100 of {attendees.length} attendees
-      </p>
-    </div>
+
+      <div className="panel">
+        <h3>Age Distribution</h3>
+        <div style={{ position: "relative" }}>
+          <Chart transitions={true} style={{ height: 240 }} onLegendItemClick={handleDonutClick}>
+            <ChartSeries>
+              <ChartSeriesItem
+                type="donut"
+                data={visibleAgeData}
+                field="count"
+                categoryField="range"
+                colorField="color"
+                holeSize={60}
+              />
+            </ChartSeries>
+            <ChartLegend position="bottom" labels={{ font: "11px inherit" }} />
+          </Chart>
+          <div className="donut-center">
+            <span className="donut-num">{activeCount}</span>
+            <span className="donut-sub">attendees</span>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
