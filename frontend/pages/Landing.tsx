@@ -167,9 +167,18 @@ export default function Landing() {
         fontSize: "0.8rem",
         color: "var(--muted)",
       }}>
-        <Link to="/login" style={{ color: "var(--muted)" }}>Demo login</Link>
-        <span style={{ margin: "0 12px" }}>·</span>
-        <Link to="/attendee" style={{ color: "var(--muted)" }}>Submit a question</Link>
+        <div>
+          <Link to="/login" style={{ color: "var(--muted)" }}>Demo login</Link>
+          <span style={{ margin: "0 12px" }}>·</span>
+          <Link to="/attendee" style={{ color: "var(--muted)" }}>Submit a question</Link>
+          <span style={{ margin: "0 12px" }}>·</span>
+          <a href="https://github.com/alxhdd/CrowdShift" target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)" }}>GitHub</a>
+        </div>
+        <div style={{ marginTop: 8 }}>
+          Built for the <a href="https://www.gitnation.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-text)" }}>Progress x GitNation Hackathon 2026</a>
+          <span style={{ margin: "0 6px" }}>by</span>
+          <a href="https://alxhdd.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-text)" }}>alxhdd</a>
+        </div>
       </footer>
     </div>
   );
