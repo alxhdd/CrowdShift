@@ -59,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-inline: 20px;
 }
 
-.k-button.k-icon-button {
+.k-button.k-icon-button:not(.k-grid *) {
   padding: 10px !important;
 }
 
